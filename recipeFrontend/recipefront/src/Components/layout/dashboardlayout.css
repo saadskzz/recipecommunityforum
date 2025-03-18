@@ -1,0 +1,7 @@
+.pageContainer{
+    display: flex;
+}
+.main-content{
+    width: 100%;
+    margin-left: 283px;
+}

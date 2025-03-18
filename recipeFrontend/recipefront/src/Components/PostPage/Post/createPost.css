@@ -1,0 +1,13 @@
+.createPost{
+    padding: 10px;
+    color: white;
+    background-color: #773CBD;
+    margin-top: 10px;
+    margin-bottom: 10px ;
+    display: inline-block;
+}
+.createPost p{
+   
+    color: white;
+    background-color: #773CBD;
+}

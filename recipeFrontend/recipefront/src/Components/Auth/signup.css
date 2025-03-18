@@ -1,0 +1,25 @@
+.signup-input {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+}
+.inp-form-style{
+    width:40%;
+    
+}
+
+.auth-image-div{
+    position: absolute;
+  
+   width: 279px;
+
+   max-width: 100%; 
+    height: auto; 
+}
+.auth-image-div img{
+    width: 100%;
+    height: auto;
+}
+

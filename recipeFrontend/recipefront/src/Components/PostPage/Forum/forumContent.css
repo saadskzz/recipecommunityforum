@@ -1,0 +1,43 @@
+/* Removed import statements as they are not supported in CSS files */
+.forumContent-post{
+    padding: 20px;
+    width: 80%;
+    margin: 10px;
+    
+     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+     
+     
+}
+.content-select{
+
+
+    font-family: 'Roboto', sans-serif;
+    border-radius: 8px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: center;
+    color: #696F77;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: white;
+    margin: 10px;
+    width: 15vw;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 170px;
+   
+
+}
+.content-select p{
+    padding: 10px;
+    
+}
+.post-content{
+    display: flex;
+    flex-direction: column;
+}
+.content-select a{
+text-decoration: none;
+color: #696F77;
+}

@@ -1,0 +1,114 @@
+.post-style{
+    font-family: 'Roboto', sans-serif;
+width: 100%;
+background-color: #EFE1FF;
+
+}
+.post-style-map{
+   margin-top: 10px;
+   background-color: white;
+   padding: 20px;
+   border-radius: 10px;
+  
+}
+.userName-style{
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0px;
+}
+.category-type{
+    font-family: 'Roboto', sans-serif;;
+font-weight: 600;
+font-size: 14px;
+line-height: 18px;
+letter-spacing: 0px;
+background-color: #EFE1FF;
+display: inline-block;
+color: #773CBD;
+padding: 10px;
+border-radius: 8px;
+}
+.post-title{
+    font-family:'Roboto', sans-serif;;
+font-weight: 600;
+font-size: 20px;
+line-height: 20px;
+letter-spacing: 0px;
+color: #151E29;
+margin-top: 15px;
+margin-bottom: 10px;
+
+}
+.post-description{
+    font-family: 'Roboto', sans-serif;;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+letter-spacing: 0px;
+color: #3D4651;
+margin-bottom: 10px;
+
+}
+.postImg{
+    width: 100%;
+    max-width: 100%;
+    height: 300px;
+    
+    display: flex;
+    justify-content: center;
+   
+}
+.postImg img{
+    max-width: 100%;
+    max-height: 100%;
+}
+.pfp-img{
+    border-radius: 50px;
+    height: 50px;
+    width: 50px;
+    background-color: #151E29;
+}
+.pfp-detail{
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    padding: 10px;
+    font-family:'Roboto', sans-serif;
+}
+
+.follow{
+    background-color: #D3F887;
+    align-self: center;
+    padding: 10px;
+    font-weight: 500;
+   
+    border-radius: 8px;
+}
+.created-by{
+    padding: 10px;
+    display: flex;
+}
+.created-at{
+    font-family: 'Roboto', sans-serif;;
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+letter-spacing: 0px;
+vertical-align: middle;
+color: #696F77;
+}
+.vote{
+    text-align: center;
+}
+.vote img{
+    
+  margin: 0;
+  width: 16px;
+   
+}
+.voted {
+ 
+}
+
+

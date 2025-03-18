@@ -1,0 +1,46 @@
+.sidebar{
+    height: 100vh;
+    background-color: #142139;
+    width: 283px;
+position: fixed;
+z-index: 10;
+padding: 20px;
+
+}
+/* //#CABED90A */
+.sidebar-content{
+ 
+ background-color: #CABED90A;
+}
+.sidebar-head{
+    display: flex;
+    background-color: #773CBD;
+    align-items: center;
+  padding: 5px;
+    font-family: 'Roboto', sans-serif;
+    color: #FFFFFF;
+}
+a{
+    text-decoration: none;
+}
+.sidebar-main{
+  
+    z-index: 1;   
+}
+.sidebar-main p{
+     margin-bottom: 10px;
+     font-weight: 500;
+     font-size: 18px;
+     font-family:'Roboto', sans-serif;
+     color: #FFFFFF80;
+     padding: 10px;
+   
+}
+.sidebar-p{
+   display: flex;
+   justify-content: space-between;
+   flex: 1;
+   margin: 5px;
+   font-family:'Roboto', sans-serif;
+   
+}

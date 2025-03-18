@@ -1,0 +1,26 @@
+.auth-input {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inp-form-style {
+    width: 40%;
+}
+
+.auth-image-div{
+    position: absolute;
+    width: 271px;
+    max-width: 100%; 
+    height: auto; 
+}
+.rec-image-div{
+    max-width: 100%;
+}
+img{
+    max-width: 100%;
+}
+@media only screen and (max-width: 250px) {
+    
+}

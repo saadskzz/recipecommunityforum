@@ -21,6 +21,10 @@ export const postsApi = createApi({
       }),
       providesTags: ['Posts']
     }),
+    getPostsByCategory: builder.query({
+      query: (categoryId) => `category/${categoryId}`,
+      providesTags: ['Posts'],
+    }),
     createPost: builder.mutation({
       query: (cred) => ({
         url: '/createpost',
@@ -76,5 +80,5 @@ export const postsApi = createApi({
     })
   })
 })
-export const {useGetAllPostsQuery, useCreatePostMutation, useDeleteSelfPostMutation, useGetMyPostsQuery, useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation, useGetFollowedPostsQuery, useGetBookmarkedPostsQuery} = postsApi
+export const {useGetAllPostsQuery, useCreatePostMutation, useDeleteSelfPostMutation, useGetMyPostsQuery, useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation, useGetFollowedPostsQuery, useGetBookmarkedPostsQuery, useGetPostsByCategoryQuery} = postsApi
 

@@ -19,7 +19,11 @@ export const discussionsApi = createApi({
       query: () => '/getdiscussioncategories',
       providesTags: ['Categories']
     }),
+    getDiscussionById: builder.query({
+      query: (id) => `getdiscussion/${id}`,
+      providesTags: ['Categories'],
+    }),
   })
 });
 
-export const { useGetAllDiscussionsQuery } = discussionsApi;
+export const { useGetAllDiscussionsQuery,useGetDiscussionByIdQuery } = discussionsApi;

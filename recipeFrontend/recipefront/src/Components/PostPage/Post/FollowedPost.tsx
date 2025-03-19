@@ -37,6 +37,7 @@ function FollowedPost() {
   const [downvote] = useUnlikePostMutation();
   const [upvote] = useLikePostMutation();
 
+
   const handleUpvote = async (id: number) => {
     await upvote({ id });
   };
@@ -46,6 +47,7 @@ function FollowedPost() {
   };
 
   const { data: posts, error, isLoading } = useGetFollowedPostsQuery(undefined);
+  console.log('followed', posts)
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;
   const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });

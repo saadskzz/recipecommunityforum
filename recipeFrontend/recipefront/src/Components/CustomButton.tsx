@@ -5,9 +5,11 @@ import { ReactNode } from 'react';
 interface ButtonProps {
   btnTxt: ReactNode;
   fontSize?: string; // Add fontSize property
+  backgroundColor?: string; // Fix typo
+  onClick: () => void; // Change onsubmit to onClick
 }
 
-function CustomButton({btnTxt, fontSize = '20px'}:ButtonProps) { // Default fontSize to '16px'
+function CustomButton({ btnTxt, onClick, fontSize = '20px', backgroundColor = 'transparent' }: ButtonProps) { // Default fontSize to '20px' and backgroundColor to 'transparent'
   return (
     <div className='custom-button'>
       <Button 
@@ -16,8 +18,9 @@ function CustomButton({btnTxt, fontSize = '20px'}:ButtonProps) { // Default font
         className='btn' 
         block 
         htmlType='submit' 
+        onClick={onClick} 
         ghost 
-        style={{ color: 'white', border: 'none', fontSize }} // Apply fontSize
+        style={{ color: 'white', border: 'none', fontSize, backgroundColor }} // Apply fontSize and backgroundColor
       >
         {btnTxt}
       </Button>

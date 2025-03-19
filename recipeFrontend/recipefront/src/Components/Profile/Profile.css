@@ -9,7 +9,34 @@
     height: 200px; /* Similar to X's cover photo height */
     width: 100%;
   }
-  
+  .edit {
+    position: absolute;
+    left: 93%;
+    top: 2%;
+    z-index: 1;
+    background-color: #D3F887;
+    align-self: center;
+    padding: 10px;
+    font-weight: 500;
+   letter-spacing: 1px;
+   color: rgb(133, 122, 122);
+    border-radius: 8px;
+  }
+  .edit-options{
+    position: absolute;
+    left: 85%;
+    top: 9%;
+    z-index: 1;
+    background-color: #eff0f1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column; /* Ensure each span starts on a new line */
+  }
+  .edit-options p{
+    padding: 10px;
+margin: 5px;
+  }
+
   .banner img {
     width: 100%;
     height: 100%;
@@ -61,8 +88,8 @@
   }
  
   .profile-info {
-    padding: 15px;
-    padding-top: 70px; /* Space for overlapping avatar */
+    padding: 25px;
+
   }
   
   .username {

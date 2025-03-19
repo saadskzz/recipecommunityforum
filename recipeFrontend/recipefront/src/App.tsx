@@ -13,6 +13,8 @@ import DashboardLayout from './Components/layout/DashboardLayout'
 import GetPosts from './Components/PostPage/Post/getPosts'
 import FollowedPost from './Components/PostPage/Post/FollowedPost'
 import BookmarkedPosts from './Components/PostPage/Post/BookmarkedPosts'
+import PostByCategory from './Components/PostPage/Post/PostByCategory'
+import AddPost from './Components/PostPage/Post/AddPost'
 
 function App() {
   return (
@@ -27,14 +29,15 @@ function App() {
           <Route path='allposts' element={<GetPosts/>}/>
           <Route path='followed' element={<FollowedPost/>}/>
           <Route path='bookmarkposts' element={<BookmarkedPosts/>}/>
+          <Route path="category/:categoryId" element={<PostByCategory />} />
           </Route>
           <Route path='profile' element={<ProfileWhole/>}/>
-      
           </Route>
         
           <Route path='/' element={<Navigate to="/login" />} />
           
          
+   
 
 
        </Routes>

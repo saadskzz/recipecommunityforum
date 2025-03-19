@@ -22,8 +22,10 @@ interface Post {
 
 function MyPosts() {
   const { data: posts, error, isLoading } = useGetMyPostsQuery(undefined);
-  const { data: currentUser } = useGetCurrentUserQuery(undefined); // Fetch current user
-  console.log('posts',posts);
+  console.log('my posts:' ,posts)
+  const { data: currentUser } = useGetCurrentUserQuery(undefined); 
+ 
+ 
   console.log(error);
   console.log('Current User:', currentUser);
 
@@ -40,7 +42,7 @@ function MyPosts() {
     return `${diffInHours} hours ago`;
   };
 
-  // Get the current user's ID
+ 
   const currentUserId = currentUser?.data?._id;
 
   return (
@@ -56,7 +58,7 @@ function MyPosts() {
                 <p className="userName-style">{post.user.firstName} {post.user.lastName}</p>
                 <p className="created-at">{getTimeAgo(post.createdAt)}</p>
               </div>
-              {/* Show + Follow only if the post's user is not the current user */}
+              
               {currentUserId && post.user._id !== currentUserId && (
                 <p className="follow">+ Follow</p>
               )}

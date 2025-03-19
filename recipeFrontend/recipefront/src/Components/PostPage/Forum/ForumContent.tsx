@@ -3,7 +3,7 @@ import GetPosts from "../Post/getPosts"
 import {ThunderboltFilled,UserOutlined,BookFilled,BookOutlined} from '@ant-design/icons'
 import './forumContent.css'
 import CategoryCard from "../DiscussionCategory/CategoryCard"
-import { ArrowUpward } from "@mui/icons-material"
+
 import { Link, Outlet } from "react-router-dom"
 import { useState } from "react"
 
@@ -14,7 +14,7 @@ function ForumContent() {
     setActiveItem(item)
   }
   return (
-    <div style={{display:'flex'}}>
+    <div style={{display:'flex',width:'100%'}}>
       <div className="forumContent-post">
         <h1>Forum</h1>
        

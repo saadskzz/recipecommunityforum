@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useGetAllPostsQuery, useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import './getpost.css';
 import upvoteIcon from '../../../../upvotesvg.svg';
 import downvoteIcon from '../../../../downvotesvg.svg';
+import { SmallDashOutlined } from '@ant-design/icons';
 
 interface Post {
   _id: string;
@@ -30,6 +31,7 @@ function GetPosts() {
   const [upvote] = useLikePostMutation();
   const [downvote] = useUnlikePostMutation();
   const { data: posts, error, isLoading } = useGetAllPostsQuery(undefined);
+  console.log('get all posts',posts)
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;
 
@@ -84,12 +86,40 @@ function GetPosts() {
     return `${diffInHours} hours ago`;
   };
 
+  const [showDelete, setShowDelete] = useState<string | null>(null);
+  const [showBookmark, setShowBookmark] = useState<string | null>(null);
+
+  const handleDeletePost = async (postId: string) => {
+    // Implement delete post logic here
+    console.log('Delete post:', postId);
+  };
+
+  const handleBookmarkPost = (postId: string) => {
+    setShowBookmark(postId);
+    console.log('Add to bookmarks:', postId);
+  };
+
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
       {error && <p>Error retrieving posts</p>}
       {posts && posts.postData.map((post: Post) => (
         <div key={post._id} className="post-style-map">
+          
+          <SmallDashOutlined style={{justifyContent:'end'}} onClick={() => { setShowDelete(post._id); handleBookmarkPost(post._id); }} />
+        <div className='post-attribute'>
+          {showDelete === post._id && currentUserId === post.user._id && (
+            <p className="delete-post" onClick={() => handleDeletePost(post._id)} style={{color:'red'}}>
+              Delete Post
+            </p>
+          )}
+          {showBookmark === post._id && (
+            <p className="bookmark-post" style={{color:'blue'}}>
+              Add to bookmarks
+            </p>
+            
+          )}
+          </div>
           <div className="created-by">
             <div className="pfp-img"></div>
             <div className="pfp-detail">
@@ -97,6 +127,7 @@ function GetPosts() {
                 <p className="userName-style">{post.user.firstName} {post.user.lastName}</p>
                 <p className="created-at">{getTimeAgo(post.createdAt)}</p>
               </div>
+              
               {currentUserId && post.user._id !== currentUserId && (
                 followingIds.includes(post.user._id) ? (
                   <p className="follow" onClick={() => handleUnfollow(post.user._id)} style={{color:'#568000'}}>

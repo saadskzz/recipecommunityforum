@@ -112,6 +112,14 @@ export const authApi = createApi({
               method: 'GET',
             }),
             providesTags: ['User'],
+        }),
+        updateBio: builder.mutation({
+            query: (bioData) => ({
+                url: '/updatebio',
+                method: 'PATCH',
+                body: bioData
+            }),
+            invalidatesTags: ['User'],
         })
     })
 });
@@ -129,5 +137,6 @@ export const {
     useUnBookmarkPostMutation,
     useUploadProfilePicMutation,
     useUploadCoverPicMutation,
-    useGetCurrentUserQuery
+    useGetCurrentUserQuery,
+    useUpdateBioMutation
 } = authApi;

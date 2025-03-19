@@ -1,7 +1,8 @@
-// CategoryCard.tsx
 import { useGetAllDiscussionsQuery } from "../../../Slices/discussionsApi";
 import { BookFilled } from "@ant-design/icons";
-import './categorycard.css'
+import { Link } from "react-router-dom"; // Add this import
+import './categorycard.css';
+
 const CategoryCard = () => {
   const { data: categories, isLoading, isError } = useGetAllDiscussionsQuery(undefined);
 
@@ -13,10 +14,16 @@ const CategoryCard = () => {
       <h2>Discussion Categories</h2>
       <div className="categories-list">
         {categories?.map((category: any) => (
-          <div key={category._id} className="category-item">
-            <BookFilled />
-            <span>{category.discussionCategory}</span>
-          </div>
+          <Link
+            to={`category/${category._id}`}
+            key={category._id}
+            style={{ textDecoration: 'none' }}  
+          >
+            <div className="category-item">
+              <BookFilled />
+              <span>{category.discussionCategory}</span>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

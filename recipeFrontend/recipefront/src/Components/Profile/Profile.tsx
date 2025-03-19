@@ -1,15 +1,16 @@
-// src/components/Profile.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Profile.css';
-import { useUploadProfilePicMutation, useUploadCoverPicMutation, useGetCurrentUserQuery } from '../../Slices/authSlice';
+import { useUploadProfilePicMutation, useUploadCoverPicMutation, useGetCurrentUserQuery, useUpdateBioMutation } from '../../Slices/authSlice';
 import MyPosts from '../PostPage/Post/myPosts';
 import LikedPosts from '../PostPage/Post/LikedPost';
+import initialProfile from '../../../initialprofile.jpg';
+import initialCoverPic from '../../../initialbackgroundsmall.jpg';
 
 interface User {
   _id: string;
   firstName: string;
   lastName: string;
-  bio?: string;
+  Bio?: string; // Changed from 'bio' to 'Bio' to match backend schema
   location?: string;
   website?: string;
   joinDate?: string;
@@ -29,47 +30,79 @@ interface UserResponse {
 const Profile = () => {
   const [uploadProfilePic] = useUploadProfilePicMutation();
   const [uploadCoverPic] = useUploadCoverPicMutation();
+  const [updateBio] = useUpdateBioMutation();
   const [profilePic, setProfilePic] = useState<File | null>(null);
   const [coverPic, setCoverPic] = useState<File | null>(null);
+  const [editProfile, setEditProfile] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState('Posts');
+  const [bio, setBio] = useState<string>('');
+  const [isEditingBio, setIsEditingBio] = useState(false);
 
   const { data: user, isLoading, isError } = useGetCurrentUserQuery(undefined);
-  console.log(user);
   const baseUrl = 'http://localhost:3000/';
 
+  const profilePicInputRef = useRef<HTMLInputElement>(null);
+  const coverPicInputRef = useRef<HTMLInputElement>(null);
+  const bioInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (user?.data) {
+      setBio(user.data.Bio || ''); // Use 'Bio' to match backend field
+    }
+  }, [user]);
+
   const handleProfilePicChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setProfilePic(event.target.files[0]);
+    if (event.target.files?.[0]) {
+      const file = event.target.files[0];
+      setProfilePic(file);
+      handleProfilePicUpload(file);
     }
   };
 
-  const handleProfilePicUpload = async () => {
-    if (!profilePic) return;
+  const handleProfilePicUpload = async (file: File) => {
     try {
       const formData = new FormData();
-      formData.append('profilePic', profilePic, profilePic.name);
-      const response = await uploadProfilePic(formData).unwrap();
-      console.log('Profile Pic Upload Response:', response);
+      formData.append('profilePic', file);
+      await uploadProfilePic(formData).unwrap();
+      setProfilePic(null);
     } catch (error) {
       console.error('Profile Pic Upload Error:', error);
     }
   };
 
   const handleCoverPicChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setCoverPic(event.target.files[0]);
+    if (event.target.files?.[0]) {
+      const file = event.target.files[0];
+      setCoverPic(file);
+      handleCoverPicUpload(file);
     }
   };
 
-  const handleCoverPicUpload = async () => {
-    if (!coverPic) return;
+  const handleCoverPicUpload = async (file: File) => {
     try {
       const formData = new FormData();
-      formData.append('coverPic', coverPic, coverPic.name);
-      const response = await uploadCoverPic(formData).unwrap();
-      console.log('Cover Pic Upload Response:', response);
+      formData.append('coverPic', file);
+      await uploadCoverPic(formData).unwrap();
+      setCoverPic(null);
     } catch (error) {
       console.error('Cover Pic Upload Error:', error);
+    }
+  };
+
+  const handleBioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBio(event.target.value);
+  };
+
+  const handleBioUpdate = async () => {
+    try {
+      if (bio !== user?.data.Bio) { // Use 'Bio' to match backend field
+        await updateBio({ bio }).unwrap(); // Send bio as an object
+      }
+    } catch (error) {
+      console.error('Bio Update Error:', error);
+    } finally {
+      setIsEditingBio(false); // Always close input, even on error or no change
+      setEditProfile(false);  // Close edit mode
     }
   };
 
@@ -80,38 +113,86 @@ const Profile = () => {
     <div className="profile-container">
       {user && (
         <React.Fragment key={user.data._id}>
-          {/* Banner Image */}
-          <div className="banner">
-            <img 
-              src={user.data.coverPic 
-                ? `${baseUrl}${user.data.coverPic.replace(/\\\\/g, "/")}` 
-                : "https://via.placeholder.com/1500x200"} 
-              alt="cover Image"
+          <div>
+            <p className="edit" onClick={() => setEditProfile(!editProfile)}>
+              edit
+            </p>
+            {editProfile && (
+              <div className="edit-options">
+                <span onClick={() => profilePicInputRef.current?.click()}>
+                  Edit Profile Picture
+                </span>
+                <span onClick={() => coverPicInputRef.current?.click()}>
+                  Edit Cover Picture
+                </span>
+                <span onClick={() => setIsEditingBio(true)}>
+                  Edit Bio
+                </span>
+              </div>
+            )}
+            <input
+              type="file"
+              ref={profilePicInputRef}
+              style={{ display: 'none' }}
+              onChange={handleProfilePicChange}
+              accept="image/*"
+            />
+            <input
+              type="file"
+              ref={coverPicInputRef}
+              style={{ display: 'none' }}
+              onChange={handleCoverPicChange}
+              accept="image/*"
             />
           </div>
-
-          {/* Profile Header */}
+          <div className="banner">
+            <img
+              src={
+                user.data.coverPic
+                  ? `${baseUrl}${user.data.coverPic.replace(/\\\\/g, '/')}`
+                  : initialCoverPic
+              }
+              alt="Cover"
+            />
+          </div>
           <div className="profile-header">
             <div className="avatar-container">
-              <img 
-                src={user.data.profilePic 
-                  ? `${baseUrl}${user.data.profilePic.replace(/\\/g, "/")}` 
-                  : "https://via.placeholder.com/140"} 
-                alt="profile Image"
+              <img
+                src={
+                  user.data.profilePic
+                    ? `${baseUrl}${user.data.profilePic.replace(/\\/g, '/')}`
+                    : initialProfile
+                }
+                alt="Profile"
               />
             </div>
             <div className="profile-actions">
               <button className="follow-btn">Follow</button>
             </div>
           </div>
-
-          {/* Profile Info */}
           <div className="profile-info">
             <h1 className="username">{`${user.data.firstName} ${user.data.lastName}`}</h1>
             <span className="handle">{`@${user.data.firstName}${user.data.lastName}`}</span>
-            
-            <p className="bio">{user.data.bio || "Web developer | Tech enthusiast | Coffee lover"}</p>
-
+            {isEditingBio ? (
+              <div className="bio-edit-container">
+                <input
+                  type="text"
+                  className="bio-input"
+                  value={bio}
+                  onChange={handleBioChange}
+                  placeholder="Enter your bio"
+                  ref={bioInputRef}
+                />
+                <button 
+                  className="bio-save-btn"
+                  onClick={handleBioUpdate}
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <p className="bio">{user.data.Bio || 'Add a bio'}</p> // Use 'Bio' to match backend field
+            )}
             <div className="user-details">
               {user.data.location && (
                 <span className="location">
@@ -128,11 +209,14 @@ const Profile = () => {
               )}
               {user.data.joinDate && (
                 <span className="join-date">
-                  <i className="fas fa-calendar-alt"></i> Joined {new Date(user.data.joinDate).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                  <i className="fas fa-calendar-alt"></i> Joined{' '}
+                  {new Date(user.data.joinDate).toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}
                 </span>
               )}
             </div>
-
             <div className="stats">
               <span className="following">
                 <strong>{user.data.following?.length || 0}</strong> Following
@@ -140,27 +224,22 @@ const Profile = () => {
               <span className="followers">
                 <strong>{user.data.followers?.length || 0}</strong> Followers
               </span>
-              
             </div>
           </div>
         </React.Fragment>
       )}
-
-      {/* Navigation Tabs */}
       <div className="profile-tabs">
-        {["Posts",  "Likes"].map((tab, index) => (
-          <button 
-            key={index} 
-            className={`tab ${tab === activeTab ? "active" : ""}`}
+        {['Posts', 'Likes'].map((tab) => (
+          <button
+            key={tab}
+            className={`tab ${activeTab === tab ? 'active' : ''}`}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
           </button>
         ))}
       </div>
-      <div>
-        {activeTab === 'Posts' ? <MyPosts /> : <LikedPosts/>}
-      </div>
+      <div>{activeTab === 'Posts' ? <MyPosts /> : <LikedPosts />}</div>
     </div>
   );
 };

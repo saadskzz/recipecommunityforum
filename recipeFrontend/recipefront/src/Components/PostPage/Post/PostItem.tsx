@@ -8,7 +8,7 @@ import downvoteIcon from '../../../../downvotesvg.svg';
 import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined } from '@ant-design/icons';
 import PostForm from './PostForm';
 import initialProfile from '../../../../initialprofile.jpg';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 
 interface PostItemProps {
   post: Post;
@@ -64,6 +64,7 @@ const PostItem: React.FC<PostItemProps> = ({
   const [showBookmark, setShowBookmark] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { data: comments, isLoading: commentsLoading, isError: commentsError } = useGetPostCommentsQuery(post._id, {
     skip: !isExpanded,
@@ -131,31 +132,44 @@ const PostItem: React.FC<PostItemProps> = ({
     message.success('Added to bookmarks');
   };
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <div className="post-style-map">
       <SmallDashOutlined
         style={{ justifyContent: 'end' }}
-        onClick={() => {
-          setShowDelete(!showDelete);
-          setShowBookmark(!showBookmark);
-         
-        }}
+        onClick={showModal}
       />
-      <div className="post-attribute" style={{ border: '1px solid #ccc', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+      <Modal
+        title="Options"
+        visible={isModalVisible}  
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+        getContainer={false}
+      >
         {showDelete && currentUser?._id === post.user._id && (
-        <div className='dashoutline-fields'>
           <p className="delete-post" onClick={handleDelete} style={{ color: 'red' }}>
-           <DeleteOutlined/> Delete Post
-           
-          </p></div>
+            <DeleteOutlined /> Delete Post
+          </p>  
         )}
         {showBookmark && (
-          <div className='dashoutline-fields'>
-            <p className="bookmark-post" onClick={handleBookmark} style={{ color: 'blue' }}>
-              <BookOutlined/> Add to bookmarks
-            </p>
-          </div>
+          <p className="bookmark-post" onClick={handleBookmark} style={{ color: 'blue' }}>
+            <BookOutlined /> Add to bookmarks
+          </p>
         )}
+      </Modal>
+      <div className="post-attribute" style={{ border: '1px solid #ccc', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
       </div>
       <div className="created-by">
         <img

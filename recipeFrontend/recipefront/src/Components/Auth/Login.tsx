@@ -8,6 +8,7 @@ import {useLoginUserMutation} from '../../Slices/authSlice'
 import AuthRec from '../../../authrec.png'
 import { useDispatch } from 'react-redux';
 import { loginSuccess,verifyToken } from '../../Slices/authverify';
+import { useState } from 'react';
 
 interface LoginForm {
     email:String,
@@ -17,6 +18,8 @@ function Login() {
 const [userLogin] = useLoginUserMutation();
 const navigate = useNavigate();
 const dispatch = useDispatch();
+const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const { control, handleSubmit } = useForm({
         defaultValues: {
@@ -30,21 +33,27 @@ const dispatch = useDispatch();
           const { data, error } = result;
           if (error) {
             console.error('Login failed:', error);
+            setErrorMessage('Email or password is incorrect');
+            setSuccessMessage(null);
             return;
           }
           if (data) {
             if(data.token){
-           
               dispatch(loginSuccess({ token: data.token, userData: data }));
-              dispatch(verifyToken({token:data.token}))
-
+              dispatch(verifyToken({token:data.token}));
+              setSuccessMessage('Logged in successfully');
+              setErrorMessage(null);
               navigate('/dashboard/forum/allposts'); // Navigate to the protected route
             }
           } else {
             console.error('No data received');
+            setErrorMessage('Email or password is incorrect');
+            setSuccessMessage(null);
           }
         } catch (err) {
           console.error('An unexpected error occurred:', err);
+          setErrorMessage('An unexpected error occurred');
+          setSuccessMessage(null);
         }
       }
   return (
@@ -66,7 +75,8 @@ const dispatch = useDispatch();
         render={({ field }) => <CustomInput {...field} type="password" placeholder="password enter"/>}
       />
   <CustomButton btnTxt='login'/>
-      
+  {errorMessage && <p className="error-message" style={{color:"red"}}>{errorMessage}</p>}
+  {successMessage && <p className="success-message" style={{color:"green"}}>{successMessage}</p>}
     </form>
     </div>
     

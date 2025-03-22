@@ -5,6 +5,8 @@ import MyPosts from '../PostPage/Post/myPosts';
 import LikedPosts from '../PostPage/Post/LikedPost';
 import initialProfile from '../../../initialprofile.jpg';
 import initialCoverPic from '../../../initialbackgroundsmall.jpg';
+import { useGetPostsByUserIdQuery } from '../../Slices/postSlice'; // Ensure this import
+import PostItem from '../PostPage/Post/PostItem'; // Ensure this import
 
 interface User {
   _id: string;
@@ -39,6 +41,7 @@ const Profile = () => {
   const [isEditingBio, setIsEditingBio] = useState(false);
 
   const { data: user, isLoading, isError } = useGetCurrentUserQuery(undefined);
+  const { data: posts, isLoading: postsLoading, isError: postsError } = useGetPostsByUserIdQuery(user?.data._id);
   const baseUrl = 'http://localhost:3000/';
 
   const profilePicInputRef = useRef<HTMLInputElement>(null);
@@ -106,8 +109,8 @@ const Profile = () => {
     }
   };
 
-  if (isLoading) return <div>Loading profile...</div>;
-  if (isError) return <div>Error loading profile. Please try again later.</div>;
+  if (isLoading || postsLoading) return <div>Loading profile...</div>;
+  if (isError || postsError) return <div>Error loading profile. Please try again later.</div>;
 
   return (
     <div className="profile-container">
@@ -118,7 +121,7 @@ const Profile = () => {
               edit
             </p>
             {editProfile && (
-              <div className="edit-options">
+              <div className="edit-options"  style={{ border: '1px solid #ccc', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <span onClick={() => profilePicInputRef.current?.click()}>
                   Edit Profile Picture
                 </span>
@@ -239,7 +242,17 @@ const Profile = () => {
           </button>
         ))}
       </div>
-      <div>{activeTab === 'Posts' ? <MyPosts /> : <LikedPosts />}</div>
+      <div>
+        {activeTab === 'Posts' ? (
+          posts?.data.length > 0 ? (
+            posts.data.map((post) => <PostItem key={post._id} post={post} />)
+          ) : (
+            <p>No posts available.</p>
+          )
+        ) : (
+          <p>Liked posts are private and cannot be viewed.</p>
+        )}
+      </div>
     </div>
   );
 };

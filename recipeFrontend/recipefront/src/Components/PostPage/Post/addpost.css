@@ -4,6 +4,7 @@
   margin-bottom:5%;
  
 }
+
 .categorystyle{
 display: flex;
 gap: 5%;
@@ -17,8 +18,10 @@ font-weight: 600;
 font-size: 16px;
 line-height: 20px;
 letter-spacing: 0px;
+padding: 10px;
 text-align: center;
-border-radius: 10px;
+border-radius: 4px;
+margin-bottom: 10px;
 }
 .ant-inp{
   background-color: white;
@@ -50,13 +53,20 @@ border-radius: 10px;
     
     }
 }
+.custom-file-label{
+ 
+}
 .custom-file-upload {
   display: none;
 }
 .custom-file-label {
-  display: inline-block;
+
+
+  display: flex;
+  justify-content: center;
+  margin: 20px;
   padding: 10px 20px;
-  background-color: #1da1f2; 
+  background-color: #773CBD; 
   color: white;
   border-radius: 5px;
   cursor: pointer;

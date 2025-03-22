@@ -18,7 +18,7 @@ function CreatePost() {
           footer={null}
           title="Create a Post"
         >
-          <AddPost />
+          <AddPost onCancel={() => SetAddPost(false)} />
         </Modal>
       )}
     </div>

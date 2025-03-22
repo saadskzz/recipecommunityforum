@@ -1,78 +1,90 @@
-import React from 'react';
-import { useGetLikedPostsQuery } from '../../../Slices/postSlice';
-import { useGetCurrentUserQuery } from '../../../Slices/authSlice'; // Import auth query
+import React, { useState, useEffect } from 'react';
+import { useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
+import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
+import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slices/commentSlice';
 import './getpost.css';
+import PostItem from './PostItem'; // Adjust the path as needed
 
 interface Post {
-  _id: number;
+  _id: string;
   title: string;
   ingredients: [string];
   instructions: string;
   recipeimg: string;
   user: {
-    _id: string; // Add _id to user object
+    _id: string;
     firstName: string;
     lastName: string;
+    profilePic?: string;
   };
   discussionCategory: {
     discussionCategory: string;
   };
   createdAt: string;
+  likes: string[];
+  unlikes: string[];
+  likesCount: number;
+  unlikesCount: number;
 }
 
 function LikedPosts() {
   const { data: posts, error, isLoading } = useGetLikedPostsQuery(undefined);
-  const { data: currentUser } = useGetCurrentUserQuery(undefined); // Fetch current user
-  console.log(posts);
-  console.log(error);
-  console.log('Current User:', currentUser);
+  const { data: currentUser } = useGetCurrentUserQuery(undefined);
+  const currentUserId = currentUser?.data?._id;
 
-  const getTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMinutes / 60);
+  const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
 
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minutes ago`;
+  useEffect(() => {
+    if (followingData) {
+      setFollowingIds(followingData.data.map((user: { _id: string }) => user._id));
     }
-    return `${diffInHours} hours ago`;
+  }, [followingData]);
+
+  const [followUser] = useFollowUserMutation();
+  const [unfollowUser] = useUnfollowUserMutation();
+
+  const handleFollow = async (userIdToFollow: string) => {
+    try {
+      await followUser(userIdToFollow).unwrap();
+      setFollowingIds((prev) => [...prev, userIdToFollow]);
+    } catch (error) {
+      console.error('Failed to follow user:', error);
+    }
   };
 
-  // Get the current user's ID
-  const currentUserId = currentUser?.data?._id;
+  const handleUnfollow = async (userIdToUnfollow: string) => {
+    try {
+      await unfollowUser(userIdToUnfollow).unwrap();
+      setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
+    } catch (error) {
+      console.error('Failed to unfollow user:', error);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    console.log('Delete post:', postId);
+  };
+
+  const handleBookmarkPost = (postId: string) => {
+    console.log('Add to bookmarks:', postId);
+  };
 
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
-      {error && <p>Error getting liked posts</p>}
+      {error && <p>You have not liked any post yet</p>}
       {posts && Array.isArray(posts.data) && posts.data.map((post: Post) => (
-        <div key={post._id} className="post-style-map">
-          <div className="created-by">
-            <div className="pfp-img"></div>
-            <div className="pfp-detail">
-              <div>
-                <p className="userName-style">{post.user.firstName} {post.user.lastName}</p>
-                <p className="created-at">{getTimeAgo(post.createdAt)}</p>
-              </div>
-              {/* Show + Follow only if the post's user is not the current user */}
-              {currentUserId && post.user._id !== currentUserId && (
-                <p className="follow">+ Follow</p>
-              )}
-            </div>
-          </div>
-          <div className="category-type">
-            <p>#{post.discussionCategory.discussionCategory}</p>
-          </div>
-          <p className="post-title">{post.title}</p>
-          <p className="post-description">{post.instructions}</p>
-          <div className="postImg" style={{ height: post.recipeimg ? '300px' : 'auto' }}>
-            {post.recipeimg && (
-              <img src={`http://localhost:3000/${post.recipeimg.replace(/\\/g, "/")}`} alt="Recipe Image" />
-            )}
-          </div>
-        </div>
+        <PostItem
+          key={post._id}
+          post={post}
+          currentUser={currentUser?.data}
+          followingIds={followingIds}
+          handleFollow={handleFollow}
+          handleUnfollow={handleUnfollow}
+          handleDeletePost={handleDeletePost}
+          handleBookmarkPost={handleBookmarkPost}
+        />
       ))}
     </div>
   );

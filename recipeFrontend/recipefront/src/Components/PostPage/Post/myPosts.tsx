@@ -48,7 +48,7 @@ function MyPosts() {
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
-      {error && <p>error getting</p>}
+      {error && <p>You have not posted anything yet</p>}
       {posts && posts.data.map((post: Post) => (
         <div key={post._id} className="post-style-map">
           <div className="created-by">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CustomInput from '../../CustomInput';
 import '../Post/addpost.css';
-import { Input } from 'antd';
+import { Input, message } from 'antd';
 import { useCreatePostMutation } from '../../../Slices/postSlice';
 import { useGetAllDiscussionsQuery } from '../../../Slices/discussionsApi';
 import CustomButton from '../../CustomButton';
@@ -20,6 +20,7 @@ function AddPost() {
     const [recipeimg, setRecipeimg] = useState<File | null>(null);
     const [selectedDiscussionCategory, setSelectedDiscussionCategory] = useState<string>('');
     const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const { data: categories = [], error, isLoading } = useGetAllDiscussionsQuery(undefined);
     const [createPost] = useCreatePostMutation();
@@ -43,6 +44,8 @@ function AddPost() {
         try {
             const response = await createPost( formData );
             console.log('Response:', response);
+            setSuccessMessage('Post created successfully');
+            message.success('Post created successfully');
         } catch (error) {
             console.log('Error:', error);
         }
@@ -74,6 +77,7 @@ function AddPost() {
                 name="instructions"
                 placeholder="add instructions"
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInstructions(e.target.value)}
+               
             />
             <div>            <label htmlFor="recipeimg" className="custom-file-label">
     Browse Picture
@@ -98,7 +102,9 @@ function AddPost() {
                     </div>
                 ))}
             </div>
+            
             <CustomButton btnTxt="submit" onClick={handleCreateFood} />
+            {successMessage && <p>{successMessage}</p>}
         </div>
     );
 }

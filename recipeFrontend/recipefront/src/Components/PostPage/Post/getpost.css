@@ -69,6 +69,31 @@ margin-bottom: 10px;
     width: 50px;
     background-color: #151E29;
 }
+.comment-name{
+    
+font-weight: 600;
+font-size: 16px;
+line-height: 20px;
+letter-spacing: 0px;
+color: #151E29;
+margin-bottom: 5px;
+}
+.comment-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+.comment-img{
+    border-radius: 50px;
+    height: 32px;
+    width: 32px;
+    background-color: #151E29;
+    margin: 5px;
+    min-width: 32px;
+}
+ 
 .pfp-detail{
     display: flex;
     flex: 1;
@@ -115,8 +140,78 @@ color: #696F77;
   width: 16px;
    
 }
-.voted {
- 
+.comment-icon {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center; 
+    gap: 5px; 
+    margin: 10px;
+   
 }
+.dashoutline-fields{
+    margin: 0;
+    display: flex
+;
+    align-items: center;
+    gap: 5px;
+    margin: 10px;
+}   
+.dashoutline-fields{ 
+margin: 0;
+display: flex;
+align-items: center;
+}
+.anticon-comment{
+    margin-right: 5px;
+}
+.comment-icon p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+.add-comment {
+    display: flex;
+}
+   
+.custom-inp{
+    width: 100%;
+}
+.ant-btn{
+    background-color: #773CBD;
+}
+.submit-comment-btn {
 
+    background-color: #EFE1FF; 
+    color: #773CBD;
+    font-family: 'Roboto', sans-serif;
+   
+    
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+ margin-left: 10px;
+ font-family: Proxima Nova;
+font-weight: 600;
+font-size: 16px;
+line-height: 20px;
+letter-spacing: 0px;
+text-align: center;
 
+ width: 100%;
+ height: 40px;
+ max-width: 169px;
+  }
+  .add-comment .ant-inp{
+    border-color: #773CBD;
+    height: 40px;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  .submit-comment-btn:hover {
+    background-color: #5A2D91; 
+  }
+  
+  .submit-comment-btn:active {
+    background-color: #4A2375; 
+  }

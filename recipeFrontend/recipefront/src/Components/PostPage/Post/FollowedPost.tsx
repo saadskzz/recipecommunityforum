@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useGetFollowedPostsQuery, useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import './getpost.css';
-import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
+import PostItem from './PostItem'; // Adjust the path as needed
 
+// Updated Post interface to include likes, unlikes, and profilePic
 interface Post {
-  _id: number;
+  _id: string; // Changed to string for consistency
   title: string;
   ingredients: [string];
   instructions: string;
@@ -14,11 +15,14 @@ interface Post {
     _id: string;
     firstName: string;
     lastName: string;
+    profilePic?: string; // Optional field for user profile picture
   };
   discussionCategory: {
     discussionCategory: string;
   };
   createdAt: string;
+  likes: string[]; // Array of user IDs who liked the post
+  unlikes: string[]; // Array of user IDs who unliked the post
   likesCount: number;
   unlikesCount: number;
 }
@@ -27,6 +31,7 @@ interface User {
   _id: string;
   firstName: string;
   lastName: string;
+  profilePic?: string; // Optional field for current user's profile picture
 }
 
 interface UserResponse {
@@ -37,19 +42,21 @@ function FollowedPost() {
   const [downvote] = useUnlikePostMutation();
   const [upvote] = useLikePostMutation();
 
-
-  const handleUpvote = async (id: number) => {
+  // Updated handler functions to use string IDs
+  const handleUpvote = async (id: string) => {
     await upvote({ id });
   };
 
-  const handleDownvote = async (id: number) => {
+  const handleDownvote = async (id: string) => {
     await downvote({ id });
   };
 
   const { data: posts, error, isLoading } = useGetFollowedPostsQuery(undefined);
-  console.log('followed', posts)
+  console.log('followed', posts);
+
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;
+
   const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });
   const [followingIds, setFollowingIds] = useState<string[]>([]);
 
@@ -80,67 +87,33 @@ function FollowedPost() {
     }
   };
 
-  const getTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMinutes / 60);
+  // Placeholder functions for delete and bookmark (to be implemented as needed)
+  const handleDeletePost = async (postId: string) => {
+    console.log('Delete post:', postId);
+    // Add delete logic here if required (e.g., useDeletePostMutation)
+  };
 
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minutes ago`;
-    }
-    return `${diffInHours} hours ago`;
+  const handleBookmarkPost = (postId: string) => {
+    console.log('Bookmark post:', postId);
+    // Add bookmark logic here if required
   };
 
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
-      {error && <p>Error fetching posts</p>}
+      {error && <p>No posts Currently by followed People</p>}
       {posts && posts.data?.length === 0 && <p>No posts from followed users yet.</p>}
       {posts && posts.data?.map((post: Post) => (
-        <div key={post._id} className="post-style-map">
-          <div className="created-by">
-            <div className="pfp-img"></div>
-            <div className="pfp-detail">
-              <div>
-                <p className="userName-style">{post.user.firstName} {post.user.lastName}</p>
-                <p className="created-at">{getTimeAgo(post.createdAt)}</p>
-              </div>
-              {currentUserId && post.user._id !== currentUserId && (
-                followingIds.includes(post.user._id) ? (
-                  <p className="follow" onClick={() => handleUnfollow(post.user._id)} style={{color:'#568000'}}>
-                    Followed
-                  </p>
-                ) : (
-                  <p className="follow" onClick={() => handleFollow(post.user._id)} style={{color:'white' }}>
-                    + Follow
-                  </p>
-                )
-              )}
-            </div>
-          </div>
-          <div className="category-type">
-            <p>#{post.discussionCategory.discussionCategory}</p>
-          </div>
-          <p className="post-title">{post.title}</p>
-          <p className="post-description">{post.instructions}</p>
-          <div className="postImg" style={{ height: post.recipeimg ? '300px' : 'auto' }}>
-            {post.recipeimg && (
-              <img src={`http://localhost:3000/${post.recipeimg.replace(/\\/g, "/")}`} alt="Recipe Image" />
-            )}
-          </div>
-          <div style={{ display: 'flex' }}>
-            <div style={{ padding: 10 }}>
-              <p onClick={() => handleUpvote(post._id)}><ArrowUpOutlined /></p>
-              <p>{post.likesCount}</p>
-            </div>
-            <div style={{ padding: 10 }}>
-              <p onClick={() => handleDownvote(post._id)}><ArrowDownOutlined /></p>
-              <p>{post.unlikesCount}</p>
-            </div>
-          </div>
-        </div>
+        <PostItem
+          key={post._id}
+          post={post}
+          currentUser={currentUser?.data} // Pass current user for profile pic and ownership checks
+          followingIds={followingIds}
+          handleFollow={handleFollow}
+          handleUnfollow={handleUnfollow}
+          handleDeletePost={handleDeletePost}
+          handleBookmarkPost={handleBookmarkPost}
+        />
       ))}
     </div>
   );

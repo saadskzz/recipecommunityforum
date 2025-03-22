@@ -29,12 +29,16 @@
     z-index: 1;
     background-color: #eff0f1;
     padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column; /* Ensure each span starts on a new line */
+    border: '1px solid #ccc', 
+  
   }
-  .edit-options p{
+  .edit-options span{
     padding: 10px;
-margin: 5px;
+color: #657786;
+
   }
 
   .banner img {
@@ -87,6 +91,10 @@ margin: 5px;
     background-color: #1a91da;
   }
  
+  .edit-options span:hover{
+    color: #773CBD;
+    cursor: pointer;
+  }
   .profile-info {
     padding: 25px;
 
@@ -119,6 +127,7 @@ margin: 5px;
   
   .user-details span {
     margin-right: 20px;
+  
   }
   
   .stats {

@@ -4,9 +4,13 @@ import { useParams } from 'react-router-dom';
 import { useGetPostsByCategoryQuery, useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetDiscussionByIdQuery } from '../../../Slices/discussionsApi'; // Adjust path if needed
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
+import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slices/commentSlice';
+import PostForm from './PostForm';
+import initialProfile from '../../../../initialprofile.jpg';
 import './getpost.css'; // Reuse styles from getPosts.tsx
 import upvoteIcon from '../../../../upvotesvg.svg';
 import downvoteIcon from '../../../../downvotesvg.svg';
+import { CommentOutlined } from '@ant-design/icons';
 
 interface Post {
   _id: string;
@@ -97,6 +101,27 @@ function PostByCategory() {
     return `${diffInHours} hours ago`;
   };
 
+  const [newComment, setNewComment] = useState('');
+  const [isExpanded, setIsExpanded] = useState<string | null>(null);
+
+  const { data: comments, isLoading: commentsLoading, isError: commentsError } = useGetPostCommentsQuery(isExpanded, {
+    skip: !isExpanded,
+  });
+
+  const [createComment] = useCreateCommentMutation();
+
+  const handleCreateComment = async (postId: string) => {
+    const content = newComment.trim();
+    if (content) {
+      try {
+        await createComment({ postId, content }).unwrap();
+        setNewComment('');
+      } catch (error) {
+        console.error('Failed to create comment:', error);
+      }
+    }
+  };
+
   // Loading and error states
   if (categoryLoading || postsLoading) return <p>Loading...</p>;
   if (categoryError) return <p>Error fetching category: {(categoryError as any).message}</p>;
@@ -161,6 +186,59 @@ function PostByCategory() {
                   <p>{post.unlikesCount}</p>
                 </div>
               </div>
+              <div className="comment-icon" onClick={() => setIsExpanded(isExpanded === post._id ? null : post._id)}>
+                <p>
+                  <CommentOutlined /> {comments ? comments.commentData.length : 0}
+                </p>
+              </div>
+              {isExpanded === post._id && (
+                <div className="comments-section">
+                  {commentsLoading ? (
+                    <p>Loading comments...</p>
+                  ) : commentsError ? (
+                    <p>Error loading comments</p>
+                  ) : (
+                    <>
+                      <div className="add-comment">
+                        <img
+                          src={currentUser?.profilePic ? `http://localhost:3000/${currentUser.profilePic.replace(/\\/g, '/')}` : initialProfile}
+                          alt="Profile"
+                          className="comment-img"
+                        />
+                        <PostForm
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          placeholder="Add a comment"
+                        />
+                        <button onClick={() => handleCreateComment(post._id)} className="submit-comment-btn">
+                          add reply
+                        </button>
+                      </div>
+                      {comments && comments.commentData.length > 0 ? (
+                        comments.commentData.map((comment) => (
+                          <div key={comment._id} className="comment">
+                            <div style={{ display: 'flex' }}>
+                              <img
+                                src={comment.author.profilePic ? `http://localhost:3000/${comment.author.profilePic.replace(/\\/g, '/')}` : initialProfile}
+                                alt="Profile"
+                                className="comment-img"
+                              />
+                              <div className="comment-content">
+                                <p style={{ alignItems: 'center', display: 'flex' }} className="comment-name">
+                                  {comment.author.firstName} {comment.author.lastName}
+                                </p>
+                                <p style={{ color: '#3D4651' }}>{comment.content}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No comments yet</p>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           ))
         ) : (

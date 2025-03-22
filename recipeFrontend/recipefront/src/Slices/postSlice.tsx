@@ -77,8 +77,12 @@ export const postsApi = createApi({
         url: '/bookmarkedposts',
       }),
       providesTags: ['Posts']
+    }),
+    getPostsByUserId: builder.query({
+      query: (userId) => `userposts/${userId}`,
+      providesTags: ['Posts'],
     })
   })
 })
-export const {useGetAllPostsQuery, useCreatePostMutation, useDeleteSelfPostMutation, useGetMyPostsQuery, useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation, useGetFollowedPostsQuery, useGetBookmarkedPostsQuery, useGetPostsByCategoryQuery} = postsApi
+export const {useGetAllPostsQuery, useCreatePostMutation, useDeleteSelfPostMutation, useGetMyPostsQuery, useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation, useGetFollowedPostsQuery, useGetBookmarkedPostsQuery, useGetPostsByCategoryQuery, useGetPostsByUserIdQuery} = postsApi
 

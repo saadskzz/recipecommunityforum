@@ -19,14 +19,14 @@ export const authApi = createApi({
                 url: `/follow/${userIdToFollow}`,
                 method: 'PATCH'
             }),
-            invalidatesTags: (result) => [{ type: 'Following', id: result._id }],
+            invalidatesTags: ['Following'],
         }),
         unfollowUser: builder.mutation({
             query: (userIdToUnfollow) => ({
                 url: `/unfollow/${userIdToUnfollow}`,
                 method: 'PATCH'
             }),
-            invalidatesTags: (result) => [{ type: 'Following', id: result._id }],
+            invalidatesTags: ['Following'],
         }),
         signUpUser: builder.mutation({
             query: (userData) => ({
@@ -71,7 +71,7 @@ export const authApi = createApi({
             query: (postId) => ({
                 url: '/bookmarkpost',
                 method: 'PATCH',
-                body: { postId }
+                body: { bookmarkedPosts: postId } // Ensure this matches the expected parameter in PostItem
             }),
             invalidatesTags: ['Bookmark'],
         }),
@@ -86,7 +86,7 @@ export const authApi = createApi({
             query: (postId) => ({
                 url: '/unbookmarkpost',
                 method: 'PATCH',
-                body: { postId }
+                body: { postId } // Ensure this matches the expected parameter in PostItem
             }),
             invalidatesTags: ['Bookmark'],
         }),
@@ -112,7 +112,13 @@ export const authApi = createApi({
               method: 'GET',
             }),
             providesTags: ['User'],
-        }),
+        }),getUserById: builder.query({
+            query: (userId) => ({
+              url: `/user/${userId}`, // Assuming backend endpoint /auth/user/:userId
+              method: 'GET'
+            }),
+            providesTags: (result) => [{ type: 'User', id: result?.data?._id }],
+          }),
         updateBio: builder.mutation({
             query: (bioData) => ({
                 url: '/updatebio',
@@ -138,5 +144,5 @@ export const {
     useUploadProfilePicMutation,
     useUploadCoverPicMutation,
     useGetCurrentUserQuery,
-    useUpdateBioMutation
+    useUpdateBioMutation,useGetUserByIdQuery
 } = authApi;

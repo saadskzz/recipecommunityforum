@@ -22,7 +22,7 @@ function ForumContent() {
         <h1>Posts</h1>
         <Outlet />
       </div>
-      <div style={{display:'flex',flexDirection:'column'}}>
+      <div style={{display:'flex',flexDirection:'column',margin:10}}>
         <div className="content-select">
           <Link to={'allposts'}>
             <p onClick={() => handleItemClick('allposts')} 

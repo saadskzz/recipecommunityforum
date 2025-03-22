@@ -6,15 +6,15 @@ import store from './store/store'
 import {  Route, Routes, Navigate } from 'react-router-dom'
 import ForumPage from './Components/PostPage/Forum/ForumPage'
 import ProtectedRoute from './Components/ProtectedRoute'
-import Profile from './Components/Profile/Profile'
+
 import ProfileWhole from './Components/Profile/ProfileWhole'
-import MyPosts from './Components/PostPage/Post/myPosts'
+
 import DashboardLayout from './Components/layout/DashboardLayout'
 import GetPosts from './Components/PostPage/Post/getPosts'
 import FollowedPost from './Components/PostPage/Post/FollowedPost'
 import BookmarkedPosts from './Components/PostPage/Post/BookmarkedPosts'
 import PostByCategory from './Components/PostPage/Post/PostByCategory'
-import AddPost from './Components/PostPage/Post/AddPost'
+import UserProfile from './Components/Profile/UserProfile'
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
           <Route path="category/:categoryId" element={<PostByCategory />} />
           </Route>
           <Route path='profile' element={<ProfileWhole/>}/>
+          <Route path='profile/:userId' element={<UserProfile/>}/>
           </Route>
         
           <Route path='/' element={<Navigate to="/login" />} />

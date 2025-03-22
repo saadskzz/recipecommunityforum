@@ -9,6 +9,7 @@
 display: flex;
 gap: 5%;
 }
+
 .categorystyle p{
 border: 1px solid #d1d4d8;
 background-color: #EFE1FF;
@@ -62,14 +63,39 @@ margin-bottom: 10px;
 .custom-file-label {
 
 
-  display: flex;
+  
   justify-content: center;
   margin: 20px;
-  padding: 10px 20px;
-  background-color: #773CBD; 
-  color: white;
+  padding: 16px;
+  background-color: #EFE1FF; 
+  color: #773CBD;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
   z-index: 1;
+  display: inline-block;
+  line-height: 20px;
+}
+.post-modal-content p{
+  
+font-weight: 600;
+font-size: 16px;
+line-height: 20px;
+letter-spacing: 0px;
+
+
+}
+.dropzone {
+  border: 2px dotted #A7AEB2;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #F8F8F8;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.dropzone.active {
+  background-color: #EFE1FF;
 }

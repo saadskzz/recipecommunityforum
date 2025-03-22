@@ -4,14 +4,16 @@ import { ReactNode } from 'react';
 
 interface ButtonProps {
   btnTxt: ReactNode;
-  fontSize?: string; // Add fontSize property
-  backgroundColor?: string; // Fix typo
-  onClick: () => void; // Change onsubmit to onClick
+  fontSize?: string;
+  backgroundColor?: string;
+  color?: string; // Add color property
+  margin?: string; // Add margin property
+  onClick: () => void;
 }
 
-function CustomButton({ btnTxt, onClick, fontSize = '20px', backgroundColor = 'transparent' }: ButtonProps) { // Default fontSize to '20px' and backgroundColor to 'transparent'
+function CustomButton({ btnTxt, onClick, fontSize = '20px', backgroundColor = 'transparent', color = 'white', margin = '0' }: ButtonProps) { // Default color to 'white', Default margin to '0'
   return (
-    <div className='custom-button'>
+    <div className='custom-button' style={{ backgroundColor, margin }}> {/* Apply margin */}
       <Button 
         type="primary" 
         size='large' 
@@ -20,7 +22,7 @@ function CustomButton({ btnTxt, onClick, fontSize = '20px', backgroundColor = 't
         htmlType='submit' 
         onClick={onClick} 
         ghost 
-        style={{ color: 'white', border: 'none', fontSize, backgroundColor }} // Apply fontSize and backgroundColor
+        style={{ color, border: 'none', fontSize, backgroundColor: 'transparent' }} // Apply color
       >
         {btnTxt}
       </Button>

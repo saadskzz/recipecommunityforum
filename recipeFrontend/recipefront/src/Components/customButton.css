@@ -1,7 +1,7 @@
 .custom-button{
-    background-color: #773CBD;
+   border-radius: 7px;
     display: flex;
     align-items: center;
-
+width: 100%;
 height: 50px;
 }

@@ -74,7 +74,7 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
         control={control}
         render={({ field }) => <CustomInput {...field} type="password" placeholder="password enter"/>}
       />
-  <CustomButton btnTxt='login'/>
+  <CustomButton btnTxt='login' backgroundColor="#773CBD"/>
   {errorMessage && <p className="error-message" style={{color:"red"}}>{errorMessage}</p>}
   {successMessage && <p className="success-message" style={{color:"green"}}>{successMessage}</p>}
     </form>

@@ -8,8 +8,6 @@ import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slic
 import PostForm from './PostForm';
 import initialProfile from '../../../../initialprofile.jpg';
 import './getpost.css'; // Reuse styles from getPosts.tsx
-import upvoteIcon from '../../../../upvotesvg.svg';
-import downvoteIcon from '../../../../downvotesvg.svg';
 import { CommentOutlined } from '@ant-design/icons';
 
 interface Post {
@@ -32,6 +30,18 @@ interface Post {
   likesCount: number;
   unlikesCount: number;
 }
+
+const UpvoteIcon = ({ className }) => (
+  <svg className={className} width="25" height="20" viewBox="0 0 24 24">
+    <path d="M12 4l-8 8h6v12h4V12h6l-8-8z" />
+  </svg>
+);
+
+const DownvoteIcon = ({ className }) => (
+  <svg className={className} width="25" height="20" viewBox="0 0 24 24">
+    <path d="M12 20l8-8h-6V0h-4v12H4l8 8z" />
+  </svg>
+);
 
 function PostByCategory() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -167,21 +177,13 @@ function PostByCategory() {
               <div style={{ display: 'flex' }}>
                 <div style={{ padding: 10 }} className="vote">
                   <p onClick={() => handleUpvote(post._id)}>
-                    <img
-                      src={upvoteIcon}
-                      alt="Upvote"
-                      className={post.likes.includes(currentUserId) ? 'voted' : ''}
-                    />
+                    <UpvoteIcon className={post.likes.includes(currentUserId) ? 'voted upvoted' : ''} />
                   </p>
                   <p>{post.likesCount}</p>
                 </div>
                 <div style={{ padding: 10 }} className="vote">
                   <p onClick={() => handleDownvote(post._id)}>
-                    <img
-                      src={downvoteIcon}
-                      alt="Downvote"
-                      className={post.unlikes.includes(currentUserId) ? 'voted' : ''}
-                    />
+                    <DownvoteIcon className={post.unlikes.includes(currentUserId) ? 'voted downvoted' : ''} />
                   </p>
                   <p>{post.unlikesCount}</p>
                 </div>

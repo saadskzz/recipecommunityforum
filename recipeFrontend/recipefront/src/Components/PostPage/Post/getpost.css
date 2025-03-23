@@ -4,12 +4,26 @@ width: 100%;
 background-color: #EFE1FF;
 
 }
+.delete-post:hover{
+    color: rgb(119, 60, 189);
+ }
+ .bookmark-post:hover{
+    color: rgb(119, 60, 189);
+}
 .post-style-map{
-   margin-top: 10px;
-   background-color: white;
-   padding: 20px;
-   border-radius: 10px;
-  
+  position: relative; /* Add this line */
+  margin-top: 10px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.delete-post {
+ 
+}
+
+.bookmark-post {
+ 
 }
 .userName-style{
     font-size: 16px;
@@ -134,10 +148,19 @@ color: #696F77;
 .vote{
     text-align: center;
 }
+.voted {
+    fill: #773CBD;
+    animation: click-feedback 0.1s ease;
+}
 .vote img{
-    
-  margin: 0;
-  width: 16px;
+   
+  width: 20px; /* Typical size, adjustable */
+  height: 20px;
+  fill: #f1f3f5; /* Reddit’s gray, a muted neutral tone */
+  cursor: pointer; /* Indicates clickability */
+  transition: fill 0.2s ease; /* Smooth color transition */
+
+
    
 }
 .comment-icon {
@@ -146,6 +169,8 @@ color: #696F77;
     align-items: center; 
     gap: 5px; 
     margin: 10px;
+    color: #696F77;
+    text-align: center;
    
 }
 .dashoutline-fields{

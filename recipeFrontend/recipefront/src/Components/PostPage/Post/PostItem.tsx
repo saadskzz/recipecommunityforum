@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slices/commentSlice';
 import './getpost.css';
+import CommentsIcon from '../../../../message.svg'
 import upvoteIcon from '../../../../upvotesvg.svg';
 import downvoteIcon from '../../../../downvotesvg.svg';
 import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined } from '@ant-design/icons';
@@ -133,6 +134,8 @@ const PostItem: React.FC<PostItemProps> = ({
   };
 
   const showModal = () => {
+    setShowDelete(true);
+    setShowBookmark(true);
     setIsModalVisible(true);
   };
 
@@ -143,7 +146,18 @@ const PostItem: React.FC<PostItemProps> = ({
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-
+  const UpvoteIcon = ({ className }) => (
+    <svg className={className} width="25" height="20" viewBox="0 0 24 24">
+      <path d="M12 4l-8 8h6v12h4V12h6l-8-8z" />
+    </svg>
+  );
+  
+  // Downvote Icon
+  const DownvoteIcon = ({ className }) => (
+    <svg className={className} width="25" height="20" viewBox="0 0 24 24">
+      <path d="M12 20l8-8h-6V0h-4v12H4l8 8z" />
+    </svg>
+  );
   return (
     <div className="post-style-map">
       <SmallDashOutlined
@@ -159,17 +173,17 @@ const PostItem: React.FC<PostItemProps> = ({
         getContainer={false}
       >
         {showDelete && currentUser?._id === post.user._id && (
-          <p className="delete-post" onClick={handleDelete} style={{ color: 'red' }}>
-            <DeleteOutlined /> Delete Post
+          <p className="delete-post" onClick={handleDelete} >
+           <span style={{display:'inline-block'}}> <DeleteOutlined /></span> Delete Post
           </p>  
         )}
         {showBookmark && (
-          <p className="bookmark-post" onClick={handleBookmark} style={{ color: 'blue' }}>
-            <BookOutlined /> Add to bookmarks
+          <p className="bookmark-post" onClick={handleBookmark} >
+          <span style={{display:'inline-block'}}>  <BookOutlined /> </span> Add to bookmarks
           </p>
         )}
       </Modal>
-      <div className="post-attribute" style={{ border: '1px solid #ccc', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+      <div className="post-attribute">
       </div>
       <div className="created-by">
         <img
@@ -212,30 +226,22 @@ const PostItem: React.FC<PostItemProps> = ({
         )}
       </div>
       <div style={{ display: 'flex' }}>
-        <div style={{ padding: 10 }} className="vote">
-          <p onClick={handleUpvote}>
-            <img
-              src={upvoteIcon}
-              alt="Upvote"
-              className={post.likes.includes(currentUser?._id || '') ? 'voted' : ''}
-            />
-          </p>
-          <p>{post.likesCount}</p>
-        </div>
-        <div style={{ padding: 10 }} className="vote">
-          <p onClick={handleDownvote}>
-            <img
-              src={downvoteIcon}
-              alt="Downvote"
-              className={post.unlikes.includes(currentUser?._id || '') ? 'voted' : ''}
-            />
-          </p>
-          <p>{post.unlikesCount}</p>
-        </div>
+      <div style={{ padding: 10 }} className="vote">
+  <p onClick={handleUpvote}>
+    <UpvoteIcon className={post.likes.includes(currentUser?._id || '') ? 'voted upvoted' : ''} />
+  </p>
+  <p>{post.likesCount}</p>
+</div>
+<div style={{ padding: 10 }} className="vote">
+  <p onClick={handleDownvote}>
+    <DownvoteIcon className={post.unlikes.includes(currentUser?._id || '') ? 'voted downvoted' : ''} />
+  </p>
+  <p>{post.unlikesCount}</p>
+</div>
       </div>
       <div className="comment-icon" onClick={() => setIsExpanded(!isExpanded)}>
         <p>
-          <CommentOutlined /> {comments ? comments.commentData.length : 0} 
+         <img src={CommentsIcon} alt="comment icon" /> {comments ? comments.commentData.length : 0} 
         </p>
       </div>
       {isExpanded && (

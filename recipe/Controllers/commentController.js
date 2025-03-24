@@ -28,7 +28,7 @@ const getPostComments = async(req, res) => {
     const postid = req.params.postid;
     try {
         if (postid) {
-            const commentData = await Comment.find({ post: postid });
+            const commentData = await Comment.find({ post: postid }).populate('author', 'firstName lastName profilePic');
             return res.status(200).json({
                 status: 'success',
                 commentData

@@ -1,4 +1,4 @@
-const { signUp, login, followUser, unfollowUser, getFollowing, getFollowers, createBookmarkedPosts, showBookmarkPost, unBookmarkPost, uploadProfilePic, uploadCoverPic, getLoggedInUser } = require('../Controllers/userController');
+const { signUp, login, followUser, unfollowUser, getFollowing, getFollowers, createBookmarkedPosts, showBookmarkPost, unBookmarkPost, uploadProfilePic, uploadCoverPic, getLoggedInUser, updateBio,getUserById } = require('../Controllers/userController');
 const { checkRole, checkToken, deleteToken } = require('../Middlewares/middleware');
 const upload = require('../Middlewares/multerConfig');
 
@@ -17,4 +17,6 @@ authRoute.get('/showbookmark',checkToken,showBookmarkPost)
 authRoute.patch('/unbookmarkpost',checkToken,unBookmarkPost)
 authRoute.patch('/uploadprofilepic', upload.single('profilePic'), checkToken, uploadProfilePic);
 authRoute.patch('/uploadcoverpic',  upload.single('coverPic'),checkToken, uploadCoverPic);
+authRoute.patch('/updatebio', checkToken, updateBio);
+authRoute.get('/user/:userId', checkToken, getUserById);
 module.exports = authRoute

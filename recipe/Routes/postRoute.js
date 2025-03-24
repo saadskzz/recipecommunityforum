@@ -1,4 +1,4 @@
-const { createPost, getAllPosts, likePost, deleteSelfPost, deleteAnyPost, unlikePost, getUserPosts, getLikedPosts, getFollowedUserPosts, getBookmarkedPosts, getPostsByCategory } = require('../Controllers/postController');
+const { createPost, getAllPosts, likePost, deleteSelfPost, deleteAnyPost, unlikePost, getUserPosts, getLikedPosts, getFollowedUserPosts, getBookmarkedPosts, getPostsByCategory, getPostsByUserId } = require('../Controllers/postController');
 const { checkToken,checkRole } = require('../Middlewares/middleware');
 const upload = require('../Middlewares/multerConfig');
 
@@ -16,6 +16,6 @@ postRoute.get('/likedposts', checkToken, getLikedPosts);
 postRoute.get('/followedposts', checkToken, getFollowedUserPosts);
 postRoute.get('/bookmarkedposts', checkToken, getBookmarkedPosts);
 postRoute.get('/category/:categoryId', checkToken, getPostsByCategory);
+postRoute.get('/userposts/:userId', checkToken, getPostsByUserId);
 
 module.exports = postRoute;
-    

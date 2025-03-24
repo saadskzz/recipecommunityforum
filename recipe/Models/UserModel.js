@@ -42,8 +42,17 @@ const userSchema = new Schema({
     default: "user"
   },
   profilePic: String,
-  coverPic: String
+  coverPic: String,
+  Bio: {
+    type: String,
+    default: ''
+  }
 })
+
+userSchema.methods.updateBio = function(newBio) {
+  this.Bio = newBio;
+  return this.save();
+};
 
 module.exports = mongoose.model("User", userSchema);
 

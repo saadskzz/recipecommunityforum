@@ -38,7 +38,7 @@ const deleteSelfPost = async (req, res) => {
 
     try {
         const post = await Post.findById(postId);
-        
+        console.log('delete hit')
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }
@@ -260,4 +260,22 @@ const getPostsByCategory = async (req, res) => {
   }
 };
 
-module.exports = { createPost, deleteSelfPost, deleteAnyPost, getAllPosts, getUserPosts, likePost, unlikePost, getLikedPosts, getFollowedUserPosts, getBookmarkedPosts, getPostsByCategory };
+const getPostsByUserId = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const posts = await Post.find({ user: userId }).populate('user').populate('discussionCategory');
+    if (!posts.length) {
+      return res.status(404).json({ message: "No posts found for this user" });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: posts
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { createPost, deleteSelfPost, deleteAnyPost, getAllPosts, getUserPosts, likePost, unlikePost, getLikedPosts, getFollowedUserPosts, getBookmarkedPosts, getPostsByCategory, getPostsByUserId };

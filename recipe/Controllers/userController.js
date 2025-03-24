@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const {createToken} = require('../Middlewares/middleware');
 const PostModel = require('../Models/PostModel');
 const signUp = async (req, res) => {
-
+console.log('signup hit')
     const { firstName, lastName, email, password, role,passwordConfirm } = req.body;
 
     if (!firstName ||!lastName|| !email || !password || !passwordConfirm) {
@@ -192,6 +192,7 @@ const logout = async(req,res)=>{
   };
 }
 const createBookmarkedPosts = async (req, res) => {
+  console.log('hitt')
     const userId = req.user._id;
     const { bookmarkedPosts } = req.body;
 
@@ -224,7 +225,13 @@ const createBookmarkedPosts = async (req, res) => {
 const showBookmarkPost = async(req,res)=>{
     const userId = req.user._id
     try{
-    const user = await User.findById(userId).populate("bookmarkedPosts")
+    const user = await User.findById(userId).populate({
+      path: 'bookmarkedPosts',
+      populate: [
+        { path: 'user' },              // Populates the user field in each post
+        { path: 'discussionCategory' } // Populates the discussionCategory field in each post
+      ]
+    })
 
 
     res.status(200).json({
@@ -313,9 +320,40 @@ const getLoggedInUser = async (req, res) => {
   }
 };
 
+const updateBio = async (req, res) => {
+  const userId = req.user._id;
+  const { bio } = req.body;
+  console.log(bio, 'biohit');
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.updateBio(bio);
+
+    res.status(200).json({ message: "Bio updated successfully", data: user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).select('-password'); // Exclude sensitive data
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ status: 'success', data: user });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   signUp,
   login,
+  getUserById,
   followUser,
   unfollowUser,
   getFollowing,
@@ -325,5 +363,6 @@ module.exports = {
   unBookmarkPost,
   uploadProfilePic,
   uploadCoverPic,
-  getLoggedInUser
+  getLoggedInUser,
+  updateBio
 };

@@ -1,18 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Profile.css';
 import { useUploadProfilePicMutation, useUploadCoverPicMutation, useGetCurrentUserQuery, useUpdateBioMutation } from '../../Slices/authSlice';
-import MyPosts from '../PostPage/Post/myPosts';
-import LikedPosts from '../PostPage/Post/LikedPost';
+import { useGetPostsByUserIdQuery, useGetLikedPostsQuery } from '../../Slices/postSlice'; // Added useGetLikedPostsQuery
 import initialProfile from '../../../initialprofile.jpg';
 import initialCoverPic from '../../../initialbackgroundsmall.jpg';
-import { useGetPostsByUserIdQuery } from '../../Slices/postSlice'; // Ensure this import
-import PostItem from '../PostPage/Post/PostItem'; // Ensure this import
+import PostItem from '../PostPage/Post/PostItem';
 
 interface User {
   _id: string;
   firstName: string;
   lastName: string;
-  Bio?: string; // Changed from 'bio' to 'Bio' to match backend schema
+  Bio?: string;
   location?: string;
   website?: string;
   joinDate?: string;
@@ -42,6 +40,7 @@ const Profile = () => {
 
   const { data: user, isLoading, isError } = useGetCurrentUserQuery(undefined);
   const { data: posts, isLoading: postsLoading, isError: postsError } = useGetPostsByUserIdQuery(user?.data._id);
+  const { data: likedPosts, isLoading: likedPostsLoading, isError: likedPostsError } = useGetLikedPostsQuery(undefined); // Fetch liked posts
   const baseUrl = 'http://localhost:3000/';
 
   const profilePicInputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +49,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (user?.data) {
-      setBio(user.data.Bio || ''); // Use 'Bio' to match backend field
+      setBio(user.data.Bio || '');
     }
   }, [user]);
 
@@ -98,19 +97,19 @@ const Profile = () => {
 
   const handleBioUpdate = async () => {
     try {
-      if (bio !== user?.data.Bio) { // Use 'Bio' to match backend field
-        await updateBio({ bio }).unwrap(); // Send bio as an object
+      if (bio !== user?.data.Bio) {
+        await updateBio({ bio }).unwrap();
       }
     } catch (error) {
       console.error('Bio Update Error:', error);
     } finally {
-      setIsEditingBio(false); // Always close input, even on error or no change
-      setEditProfile(false);  // Close edit mode
+      setIsEditingBio(false);
+      setEditProfile(false);
     }
   };
 
-  if (isLoading || postsLoading) return <div>Loading profile...</div>;
-  if (isError || postsError) return <div>Error loading profile. Please try again later.</div>;
+  if (isLoading || postsLoading || likedPostsLoading) return <div>Loading profile...</div>;
+  if (isError || postsError || likedPostsError) return <div>Error loading profile. Please try again later.</div>;
 
   return (
     <div className="profile-container">
@@ -121,7 +120,7 @@ const Profile = () => {
               edit
             </p>
             {editProfile && (
-              <div className="edit-options"  style={{ border: '1px solid #ccc', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+              <div className="edit-options" style={{ border: '1px solid #ccc', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <span onClick={() => profilePicInputRef.current?.click()}>
                   Edit Profile Picture
                 </span>
@@ -169,9 +168,7 @@ const Profile = () => {
                 alt="Profile"
               />
             </div>
-            <div className="profile-actions">
-              <button className="follow-btn">Follow</button>
-            </div>
+            {/* Removed the follow button */}
           </div>
           <div className="profile-info">
             <h1 className="username">{`${user.data.firstName} ${user.data.lastName}`}</h1>
@@ -186,15 +183,12 @@ const Profile = () => {
                   placeholder="Enter your bio"
                   ref={bioInputRef}
                 />
-                <button 
-                  className="bio-save-btn"
-                  onClick={handleBioUpdate}
-                >
+                <button className="bio-save-btn" onClick={handleBioUpdate}>
                   Save
                 </button>
               </div>
             ) : (
-              <p className="bio">{user.data.Bio || 'Add a bio'}</p> // Use 'Bio' to match backend field
+              <p className="bio">{user.data.Bio || 'Add a bio'}</p>
             )}
             <div className="user-details">
               {user.data.location && (
@@ -249,8 +243,14 @@ const Profile = () => {
           ) : (
             <p>No posts available.</p>
           )
+        ) : likedPostsLoading ? (
+          <p>Loading liked posts...</p>
+        ) : likedPostsError ? (
+          <p>Error loading liked posts.</p>
+        ) : likedPosts?.data.length > 0 ? (
+          likedPosts.data.map((post) => <PostItem key={post._id} post={post} />)
         ) : (
-          <p>Liked posts are private and cannot be viewed.</p>
+          <p>No liked posts available.</p>
         )}
       </div>
     </div>

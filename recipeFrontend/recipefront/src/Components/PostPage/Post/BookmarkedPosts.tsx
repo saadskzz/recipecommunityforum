@@ -29,7 +29,18 @@ interface Post {
 function BookmarkedPosts() {
   // Use the correct query from authSlice
   const { data: bookmarkedData, error, isLoading } = useShowBookmarkPostQuery();
-  const bookmarkedPosts = bookmarkedData?.user?.bookmarkedPosts || []; // Adjust data access
+  const bookmarkedPosts = bookmarkedData?.user?.bookmarkedPosts.map((post: Post) => ({
+    ...post,
+    user: {
+      ...post.user,
+      profilePic: post.user.profilePic || '',
+      firstName: post.user.firstName || '',
+      lastName: post.user.lastName || ''
+    },
+    discussionCategory: {
+      discussionCategory: post.discussionCategory.discussionCategory || ''
+    }
+  })) || [];
 
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;

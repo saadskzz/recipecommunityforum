@@ -67,6 +67,10 @@ function AddPost() {
         console.log(selectedDiscussionCategory);
     };
 
+    const handleCloseModal = () => {
+        
+    };
+
     return (
         <div className='post-modal-content'>
             <p>Title</p>
@@ -101,7 +105,7 @@ function AddPost() {
                         onClick={() => handleCategoryClick(category._id)}
                         style={{ color: selectedCategory === category._id ? '#6521B5' : '#696F77' }}
                     >
-                        <p>{category.discussionCategory}</p>
+                        <p style={{cursor:'pointer'}}>{category.discussionCategory}</p>
                     </div>
                 ))}
             </div>
@@ -139,7 +143,7 @@ function AddPost() {
          
             <div style={{display:'flex',justifyContent:'space-between'}}>
                
-                <CustomButton btnTxt="Cancel" backgroundColor="#EFE1FF" color="#773CBD" margin="0px 0px 0px 10px" />
+                <CustomButton btnTxt="Cancel" onClick={handleCloseModal} backgroundColor="#EFE1FF" color="#773CBD" margin="0px 0px 0px 10px" />
                
             <CustomButton btnTxt="submit" onClick={handleCreateFood} backgroundColor="#6521B5" color="#FFFFFF" margin="0 0 0 10px" />
             {successMessage && <p>{successMessage}</p>}

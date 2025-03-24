@@ -49,8 +49,10 @@ export const authApi = createApi({
                 url: `/${userId}/following`,
                 method: 'GET'
             }),
-            providesTags: (result) => 
-                Array.isArray(result) ? result.map(({ id }) => ({ type: 'Following', id })) : [],
+            providesTags:(result) => [
+                { type: 'Following' }, // Add the general string tag
+                ...(Array.isArray(result) ? result.map(({ id }) => ({ type: 'Following' as const, id })) : [])
+            ],
         }),
         getFollowers: builder.query({
             query: (userId) => ({

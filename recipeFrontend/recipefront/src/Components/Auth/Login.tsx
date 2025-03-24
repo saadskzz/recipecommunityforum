@@ -78,6 +78,10 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
   {errorMessage && <p className="error-message" style={{color:"red"}}>{errorMessage}</p>}
   {successMessage && <p className="success-message" style={{color:"green"}}>{successMessage}</p>}
     </form>
+    <div>
+    <p>Don't have an account? </p>
+    <Link to={'/signup'}>Register now</Link>
+    </div>
     </div>
     
     </div>

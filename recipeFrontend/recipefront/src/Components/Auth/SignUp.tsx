@@ -1,12 +1,10 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSignUpUserMutation } from "../../Slices/authSlice"; // Adjust the path to where authApi is defined
 import CustomButton from "../CustomButton";
 import CustomInput from "../CustomInput";
 import Authrec from "../../../authrec.png";
 import './signup.css';
-
-
 
 //firstName //lastName //email/ password/passwordConfirm
 interface SignUpForm{
@@ -68,6 +66,8 @@ function SignUp() {
                                     type="text" 
                                     placeholder="enter first name" 
                                     error={error?.message} 
+                                    name={field.name}
+                                    onChange={field.onChange}
                                 />
                             )}
                         />
@@ -81,6 +81,8 @@ function SignUp() {
                                     type="text" 
                                     placeholder="enter last name" 
                                     error={error?.message} 
+                                    name={field.name}
+                                    onChange={field.onChange}
                                 />
                             )}
                         />
@@ -100,6 +102,8 @@ function SignUp() {
                                     type="email" 
                                     placeholder="enter email" 
                                     error={error?.message} 
+                                    name={field.name}
+                                    onChange={field.onChange}
                                 />
                             )}
                         />
@@ -116,6 +120,8 @@ function SignUp() {
                                     type="password" 
                                     placeholder="enter password" 
                                     error={error?.message} 
+                                    name={field.name}
+                                    onChange={field.onChange}
                                 />
                             )}
                         />
@@ -132,13 +138,15 @@ function SignUp() {
                                     type="password" 
                                     placeholder="enter password again" 
                                     error={error?.message} 
+                                    name={field.name}
+                                    onChange={field.onChange}
                                 />
                             )}
                         />
                         <CustomButton 
                             btnTxt={isLoading ? "Signing up..." : "sign up"} 
                             disabled={!isValid || isLoading}  onClick={onSubmit}
-                            backgroundColor="green"
+                            backgroundColor="#773CBD"
                         />
                         {isError && (
                             <p style={{ color: 'red' }}>
@@ -146,8 +154,14 @@ function SignUp() {
                             </p>
                         )}
                     </form>
+                    <div style={{display:"flex"}}>
+                  <p>Already have an account?</p>
+                 <Link to={'/login'}>Login</Link>
                 </div>
+                </div>
+             
             </div>
+           
         </div>
   )
 }

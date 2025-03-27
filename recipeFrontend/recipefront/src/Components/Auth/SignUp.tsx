@@ -1,6 +1,6 @@
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useSignUpUserMutation } from "../../Slices/authSlice"; // Adjust the path to where authApi is defined
+import { useSignUpUserMutation } from "../../Slices/authSlice"; 
 import CustomButton from "../CustomButton";
 import CustomInput from "../CustomInput";
 import Authrec from "../../../authrec.png";
@@ -19,7 +19,7 @@ function SignUp() {
   const [signUpUser, { isLoading, isError, error }] = useSignUpUserMutation();
 
   const { control, handleSubmit, watch, formState: { isValid } } = useForm<SignUpForm>({
-      mode: "onChange", // Validate on every change for real-time feedback
+      mode: "onChange", 
       defaultValues: {
           firstName: "",
           lastName: "",
@@ -40,11 +40,11 @@ function SignUp() {
       passwordConfirm: data.passwordConfirm
   });
     try {
-        await signUpUser(data).unwrap(); // Send data to backend and unwrap the result
-        navigate('/login'); // Redirect to login page on success
+        await signUpUser(data).unwrap(); 
+        navigate('/login'); 
         console.log('submitting')
     } catch (err) {
-        // Errors are automatically caught and reflected in isError and error
+        
         console.error("Sign-up failed:", err);
     }
 };
@@ -154,7 +154,7 @@ function SignUp() {
                             </p>
                         )}
                     </form>
-                    <div style={{display:"flex"}}>
+                    <div style={{display:"flex"}} className="login-link">
                   <p>Already have an account?</p>
                  <Link to={'/login'}>Login</Link>
                 </div>

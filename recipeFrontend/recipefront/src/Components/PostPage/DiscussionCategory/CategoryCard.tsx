@@ -1,6 +1,6 @@
 import { useGetAllDiscussionsQuery } from "../../../Slices/discussionsApi";
 import { BookFilled } from "@ant-design/icons";
-import { Link } from "react-router-dom"; // Add this import
+import { Link } from "react-router-dom"; 
 import './categorycard.css';
 
 const CategoryCard = () => {

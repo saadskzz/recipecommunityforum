@@ -5,25 +5,25 @@ import {
   useGetFollowingQuery,
   useFollowUserMutation,
   useUnfollowUserMutation,
-  useGetUserByIdQuery // Add this new query
+  useGetUserByIdQuery 
 } from '../../Slices/authSlice';
-import { useGetPostsByUserIdQuery } from '../../Slices/postSlice'; // Ensure this import
-import './Profile.css'; // Reuse Profile.tsx styling
+import { useGetPostsByUserIdQuery } from '../../Slices/postSlice'; 
+import './Profile.css'; 
 import initialProfile from '../../../initialprofile.jpg';
 import initialCoverPic from '../../../initialbackgroundsmall.jpg';
-import PostItem from '../PostPage/Post/PostItem'; // We'll create this component
+import PostItem from '../PostPage/Post/PostItem'; 
 
 const UserProfile = () => {
-  const { userId } = useParams(); // Get userId from URL
+  const { userId } = useParams(); 
   const [activeTab, setActiveTab] = useState('Posts');
 
-  // Fetch the profile user's data
+ 
   const { data: user, isLoading: userLoading, isError: userError } = useGetUserByIdQuery(userId);
 
-  // Fetch the profile user's posts
+ 
   const { data: posts, isLoading: postsLoading, isError: postsError } = useGetPostsByUserIdQuery(userId);
 
-  // Fetch current user's data for follow/unfollow logic
+  
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;
   const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });

@@ -43,7 +43,7 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
               dispatch(verifyToken({token:data.token}));
               setSuccessMessage('Logged in successfully');
               setErrorMessage(null);
-              navigate('/dashboard/forum/allposts'); // Navigate to the protected route
+              navigate('/dashboard/forum/allposts'); 
             }
           } else {
             console.error('No data received');
@@ -78,7 +78,7 @@ const [successMessage, setSuccessMessage] = useState<string | null>(null);
   {errorMessage && <p className="error-message" style={{color:"red"}}>{errorMessage}</p>}
   {successMessage && <p className="success-message" style={{color:"green"}}>{successMessage}</p>}
     </form>
-    <div>
+    <div  className='signup-link'>
     <p>Don't have an account? </p>
     <Link to={'/signup'}>Register now</Link>
     </div>

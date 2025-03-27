@@ -9,7 +9,13 @@
     width:40%;
     
 }
-
+.login-link{
+    display: flex;
+    margin-top: 15px;
+    }
+    .login-link a{
+        margin-left: 5px;
+    }
 .auth-image-div{
     position: absolute;
   

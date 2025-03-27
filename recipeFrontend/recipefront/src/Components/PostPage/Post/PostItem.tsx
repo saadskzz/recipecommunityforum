@@ -179,7 +179,7 @@ const PostItem: React.FC<PostItemProps> = ({
         )}
         {showBookmark && (
           <p className="bookmark-post" onClick={handleBookmark} >
-          <span style={{display:'inline-block'}}>  <BookOutlined /> </span> Add to bookmarks
+          <span style={{display:'inline-block', }}>  <BookOutlined /> </span> Add to bookmarks
           </p>
         )}
       </Modal>
@@ -240,7 +240,7 @@ const PostItem: React.FC<PostItemProps> = ({
 </div>
       </div>
       <div className="comment-icon" onClick={() => setIsExpanded(!isExpanded)}>
-        <p>
+        <p style={{cursor:'pointer'}}>
          <img src={CommentsIcon} alt="comment icon" /> {comments ? comments.commentData.length : 0} 
         </p>
       </div>

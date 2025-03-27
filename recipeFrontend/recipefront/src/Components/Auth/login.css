@@ -8,7 +8,13 @@
 .inp-form-style {
     width: 40%;
 }
-
+.signup-link{
+display: flex;
+margin-top: 15px;
+}
+.signup-link a{
+    margin-left: 5px;
+}
 .auth-image-div{
     position: absolute;
     width: 271px;

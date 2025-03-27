@@ -8,7 +8,7 @@ interface ButtonProps {
   backgroundColor?: string;
   color?: string; // Add color property
   margin?: string; // Add margin property
-  onClick: () => void;
+  onClick?: () => void; // Make onClick optional
 }
 
 function CustomButton({ btnTxt, onClick, fontSize = '20px', backgroundColor = 'transparent', color = 'white', margin = '0' }: ButtonProps) { // Default color to 'white', Default margin to '0'

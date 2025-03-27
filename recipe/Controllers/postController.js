@@ -182,7 +182,7 @@ const getLikedPosts = async (req, res) => {
   const userId = req.user._id;
 console.log('liked')
   try {
-    const likedPosts = await Post.find({ likes: userId }).populate('user');
+    const likedPosts = await Post.find({ likes: userId }).populate('user').populate('discussionCategory');
     if (!likedPosts.length) {
       return res.status(404).json({ message: "No liked posts found for this user" });
     }
@@ -206,7 +206,9 @@ const getFollowedUserPosts = async (req, res) => {
     }
 
     const followedUserIds = user.following.map(followedUser => followedUser._id);
-    const followedPosts = await Post.find({ user: { $in: followedUserIds } }).populate('user');
+    const followedPosts = await Post.find({ user: { $in: followedUserIds } })
+      .populate('user')
+      .populate('discussionCategory'); // Added population of discussionCategory
 
     if (!followedPosts.length) {
       return res.status(404).json({ message: "No posts found for followed users" });

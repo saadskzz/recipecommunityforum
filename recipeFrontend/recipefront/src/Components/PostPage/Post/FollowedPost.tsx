@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useGetFollowedPostsQuery, useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import './getpost.css';
-import PostItem from './PostItem'; // Adjust the path as needed
+import PostItem from './PostItem'; 
 
-// Updated Post interface to include likes, unlikes, and profilePic
+
 interface Post {
-  _id: string; // Changed to string for consistency
+  _id: string; 
   title: string;
   ingredients: [string];
   instructions: string;
@@ -15,14 +15,14 @@ interface Post {
     _id: string;
     firstName: string;
     lastName: string;
-    profilePic?: string; // Optional field for user profile picture
+    profilePic?: string; 
   };
   discussionCategory: {
     discussionCategory: string;
   };
   createdAt: string;
-  likes: string[]; // Array of user IDs who liked the post
-  unlikes: string[]; // Array of user IDs who unliked the post
+  likes: string[]; 
+  unlikes: string[]; 
   likesCount: number;
   unlikesCount: number;
 }
@@ -31,7 +31,7 @@ interface User {
   _id: string;
   firstName: string;
   lastName: string;
-  profilePic?: string; // Optional field for current user's profile picture
+  profilePic?: string; 
 }
 
 interface UserResponse {
@@ -42,7 +42,7 @@ function FollowedPost() {
   const [downvote] = useUnlikePostMutation();
   const [upvote] = useLikePostMutation();
 
-  // Updated handler functions to use string IDs
+  
   const handleUpvote = async (id: string) => {
     await upvote({ id });
   };
@@ -87,15 +87,15 @@ function FollowedPost() {
     }
   };
 
-  // Placeholder functions for delete and bookmark (to be implemented as needed)
+
   const handleDeletePost = async (postId: string) => {
     console.log('Delete post:', postId);
-    // Add delete logic here if required (e.g., useDeletePostMutation)
+  
   };
 
   const handleBookmarkPost = (postId: string) => {
     console.log('Bookmark post:', postId);
-    // Add bookmark logic here if required
+ 
   };
 
   return (
@@ -107,7 +107,7 @@ function FollowedPost() {
         <PostItem
           key={post._id}
           post={post}
-          currentUser={currentUser?.data} // Pass current user for profile pic and ownership checks
+          currentUser={currentUser?.data}
           followingIds={followingIds}
           handleFollow={handleFollow}
           handleUnfollow={handleUnfollow}

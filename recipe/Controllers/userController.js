@@ -350,6 +350,44 @@ const getUserById = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const userId = req.user?._id; // Ensure req.user exists
+  const { oldPassword, newPassword, passwordConfirm } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized access" });
+  }
+
+  if (!oldPassword || !newPassword || !passwordConfirm) {
+    return res.status(400).json({ message: "All fields must be filled" });
+  }
+
+  if (newPassword !== passwordConfirm) {
+    return res.status(400).json({ message: "New passwords do not match" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordCorrect) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    const salt = await bcrypt.genSalt(6);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 module.exports = {
   signUp,
   login,
@@ -364,5 +402,6 @@ module.exports = {
   uploadProfilePic,
   uploadCoverPic,
   getLoggedInUser,
-  updateBio
+  updateBio,
+  changePassword
 };

@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const postRoute = require('./Routes/postRoute');
 const commentRouter = require('./Routes/commentRoute');
 const discussRoute = require('./Routes/discussionRoute');
+const recipeRouter = require('./Routes/recipeRoute');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -25,6 +27,7 @@ app.use('/auth',authRoute)
 app.use('/api',postRoute)
 app.use('/engagement',commentRouter)
 app.use('/api/v1',discussRoute)
+app.use('/askai',recipeRouter)
 app.listen(port,()=>{
     console.log(`connected to server at port ${port}`)
 })

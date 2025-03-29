@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './sidebar.css'
-import { HomeFilled, HomeTwoTone } from '@ant-design/icons'
+import { HomeFilled, HomeTwoTone, SettingOutlined, SettingTwoTone } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import Home from '../../../../Home.svg'
 
@@ -48,7 +48,11 @@ function Sidebar() {
             </p> </Link></div>
           </div>
         </main>
-        {/* Additional content can go here */}
+      
+      </div>
+      <div className='settings'>
+     <Link to={'/dashboard/settings'}> <p> <SettingTwoTone twoToneColor={'white'}/><span style={{marginLeft:5}}> Settings</span></p>
+     </Link>  
       </div>
     </aside>
   )

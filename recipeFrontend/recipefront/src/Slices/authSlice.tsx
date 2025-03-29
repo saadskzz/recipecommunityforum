@@ -44,6 +44,14 @@ export const authApi = createApi({
             }),
             invalidatesTags: ['User'],
         }),
+        changePassword: builder.mutation({
+            query: ({ oldPassword, newPassword, passwordConfirm }) => ({
+              url: "/changepassword",
+              method: "PATCH",
+              body: { oldPassword, newPassword, passwordConfirm },
+            }),
+            invalidatesTags: ["User"],
+          }),
         getFollowing: builder.query({
             query: (userId) => ({
                 url: `/${userId}/following`,
@@ -146,5 +154,6 @@ export const {
     useUploadProfilePicMutation,
     useUploadCoverPicMutation,
     useGetCurrentUserQuery,
-    useUpdateBioMutation,useGetUserByIdQuery
+    useUpdateBioMutation,useGetUserByIdQuery,
+    useChangePasswordMutation
 } = authApi;

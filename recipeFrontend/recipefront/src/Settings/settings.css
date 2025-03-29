@@ -1,0 +1,14 @@
+.style-features{
+    background-color:#1C1C1D;
+    padding:40px;
+    margin:30px;
+    cursor: pointer;
+}
+.style-features p{
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+}
+.style-features:hover{
+    background-color: #773CBD;
+}

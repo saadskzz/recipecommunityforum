@@ -16,6 +16,7 @@ import BookmarkedPosts from './Components/PostPage/Post/BookmarkedPosts'
 import PostByCategory from './Components/PostPage/Post/PostByCategory'
 import UserProfile from './Components/Profile/UserProfile'
 import ChatPage from './Components/Home/ChatPage'
+import Settings from './Settings/Settings'
 
 function App() {
   return (
@@ -31,7 +32,9 @@ function App() {
           <Route path='followed' element={<FollowedPost/>}/>
           <Route path='bookmarkposts' element={<BookmarkedPosts/>}/>
           <Route path="category/:categoryId" element={<PostByCategory />} />
+          
           </Route>
+          <Route path='settings' element={<Settings/>}/>
           <Route path='profile' element={<ProfileWhole/>}/>
           <Route path='profile/:userId' element={<UserProfile/>}/>
         

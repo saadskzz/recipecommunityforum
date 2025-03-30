@@ -10,6 +10,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@azure-rest/ai-inference": "latest",
+    "@azure/core-auth": "latest",
+    "@azure/core-sse": "latest",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -23,8 +26,6 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
-    "@azure-rest/ai-inference": "latest",
-    "@azure/core-auth": "latest",
-    "@azure/core-sse": "latest"
+    "react-icons": "^5.5.0"
   }
 }

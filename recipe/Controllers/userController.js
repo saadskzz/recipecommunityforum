@@ -189,7 +189,7 @@ const logout = async(req,res)=>{
   let token = await User.findOne({ userId: user._id });
   if (token) { 
         await token.deleteOne()
-  };
+  };  
 }
 const createBookmarkedPosts = async (req, res) => {
   console.log('hitt')
@@ -351,7 +351,7 @@ const getUserById = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const userId = req.user?._id; // Ensure req.user exists
+  const userId = req.user?._id; 
   const { oldPassword, newPassword, passwordConfirm } = req.body;
 
   if (!userId) {

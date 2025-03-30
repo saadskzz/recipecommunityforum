@@ -98,6 +98,8 @@ import noPost from '../../../../noPost.jpg'
         <p>No posts Currently </p> </div>}
         {posts &&
           posts.postData.map((post: Post) => (
+            <div>
+              <h1>Followed posts</h1>
             <PostItem
               key={post._id}
               post={post}
@@ -108,6 +110,7 @@ import noPost from '../../../../noPost.jpg'
               handleDeletePost={handleDeletePost}
               handleBookmarkPost={handleBookmarkPost}
             />
+            </div>
           ))}
       </div>
     );

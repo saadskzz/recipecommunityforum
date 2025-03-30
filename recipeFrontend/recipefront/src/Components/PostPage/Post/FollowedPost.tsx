@@ -106,6 +106,7 @@ function FollowedPost() {
         <p>No posts Currently by followed People</p> </div>}
       {posts && posts.data?.length === 0 && <p>No posts from followed users yet.</p>}
       {posts && posts.data?.map((post: Post) => (
+        <div> <h1>Followed Posts</h1>
         <PostItem
           key={post._id}
           post={post}
@@ -116,7 +117,9 @@ function FollowedPost() {
           handleDeletePost={handleDeletePost}
           handleBookmarkPost={handleBookmarkPost}
         />
+        </div>
       ))}
+      
     </div>
   );
 }

@@ -1,44 +1,28 @@
-// src/components/HaraBharaKabab.tsx
+
 import React from 'react';
 import './Airesponse.css';
-import recipeImage from '../../../initialprofile.jpg'; // Adjust path as needed
-import { FaClock, FaUtensils } from 'react-icons/fa';
+import recipeImage from '../../../initialprofile.jpg'; 
 
 const Airesponse: React.FC = () => {
   return (
     <div className="recipe-page">
-      {/* Breadcrumb Navigation */}
-      <nav className="breadcrumb">
-        <a href="/">Home</a> &gt; <a href="/recipes">Recipes</a> &gt;{' '}
-        <a href="/recipes/vegetarian">Vegetarian</a> &gt; Hara Bhara Kabab
-      </nav>
+     
+     
 
-      {/* Recipe Title */}
+   
       <h1 className="recipe-title">Hara Bhara Kabab</h1>
 
-      {/* Recipe Image */}
-      <img src={recipeImage} alt="Hara Bhara Kabab" className="recipe-image" />
+   <div style={{display:'flex',alignContent:'center',alignItems:'center'}}>
+      <img src={recipeImage} style={{height:"30%",width:'30%'}} alt="Hara Bhara Kabab" className="recipe-image" />
 
-      {/* Recipe Description */}
-      <p className="recipe-description">
+     
+      <p className="recipe-description" style={{marginLeft:20}}>
         A delicious and healthy vegetarian snack made with spinach, peas, and
         potatoes, spiced to perfection and shallow-fried for a crispy finish.
       </p>
 
-      {/* Recipe Metadata */}
-      <div className="recipe-meta">
-        <p>
-          <FaClock /> <strong>Prep Time:</strong> 20 mins
-        </p>
-        <p>
-          <FaClock /> <strong>Cook Time:</strong> 15 mins
-        </p>
-        <p>
-          <FaUtensils /> <strong>Serves:</strong> 4
-        </p>
       </div>
-
-      {/* Ingredients */}
+     
       <h2>Ingredients</h2>
       <ul className="ingredients-list">
         <li>
@@ -73,7 +57,7 @@ const Airesponse: React.FC = () => {
         </li>
       </ul>
 
-      {/* Method */}
+     
       <h2>Method</h2>
       <ol className="method-list">
         <li>
@@ -128,10 +112,8 @@ const Airesponse: React.FC = () => {
         </tbody>
       </table>
 
-      {/* Footer */}
-      <footer className="recipe-footer">
-        <p>&copy; 2023 BBC Good Food Middle East. All rights reserved.</p>
-      </footer>
+     
+      
     </div>
   );
 };

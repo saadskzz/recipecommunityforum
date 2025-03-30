@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useShowBookmarkPostQuery } from '../../../Slices/authSlice'; // Correct import
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation,useUnfollowUserMutation } from '../../../Slices/authSlice';
+import { useUpvotePostMutation, useDownvotePostMutation } from '../../../Slices/postSlice';
 import './getpost.css';
 import PostItem from './PostItem';
 import noPost from '../../../../noPost.jpg'
@@ -57,6 +58,8 @@ function BookmarkedPosts() {
 
   const [followUser] = useFollowUserMutation();
   const [unfollowUser] = useUnfollowUserMutation();
+  const [upvotePost] = useUpvotePostMutation();
+  const [downvotePost] = useDownvotePostMutation();
 
   const handleFollow = async (userIdToFollow: string) => {
     const previousFollowingIds = [...followingIds];
@@ -91,12 +94,30 @@ function BookmarkedPosts() {
     console.log('Add to bookmarks:', postId);
   };
 
+  const handleUpvote = async (postId: string) => {
+    try {
+      await upvotePost(postId).unwrap();
+    } catch (error) {
+      console.error('Failed to upvote post:', error);
+    }
+  };
+
+  const handleDownvote = async (postId: string) => {
+    try {
+      await downvotePost(postId).unwrap();
+    } catch (error) {
+      console.error('Failed to downvote post:', error);
+    }
+  };
+
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
       {error && <p>There are no bookmarks you have made as of now</p>}
       {bookmarkedPosts.length > 0 ? (
         bookmarkedPosts.map((post: Post) => (
+          <div>
+      <h1>Bookmarked Posts</h1>
           <PostItem
             key={post._id}
             post={post}
@@ -106,7 +127,10 @@ function BookmarkedPosts() {
             handleUnfollow={handleUnfollow}
             handleDeletePost={handleDeletePost}
             handleBookmarkPost={handleBookmarkPost}
+            handleUpvote={handleUpvote} // Pass handleUpvote
+            handleDownvote={handleDownvote} // Pass handleDownvote
           />
+          </div>
         ))
       ) : (
         <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useGetMyPostsQuery } from '../../../Slices/postSlice';
 import { useGetCurrentUserQuery } from '../../../Slices/authSlice';
 import './getpost.css';
-
+import noPost from '../../../../noPost.jpg'
 interface Post {
   _id: number;
   title: string;

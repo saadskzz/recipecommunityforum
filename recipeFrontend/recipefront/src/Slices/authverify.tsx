@@ -4,18 +4,21 @@ interface initialvalues {
   token: string,
   isAuthenticated: boolean,
   userData: object
+  authInitialized: boolean;
 }
 
 const initialState: initialvalues = {
   token: '',
   isAuthenticated: false,
-  userData: {}
+  userData: {},
+  authInitialized: false
 }
 
 export const authverifySlice = createSlice({
   name: 'authverify',
   initialState,
   reducers: {
+    
     loginSuccess: (state, action) => {
       state.token = action.payload.token;
       state.isAuthenticated = true; 
@@ -41,6 +44,7 @@ export const authverifySlice = createSlice({
         state.token = token;
         state.isAuthenticated = true;
       }
+      state.authInitialized = true;
     }
   }
 })

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGetMyPostsQuery } from '../../../Slices/postSlice';
-import { useGetCurrentUserQuery } from '../../../Slices/authSlice'; // Import auth query
+import { useGetCurrentUserQuery } from '../../../Slices/authSlice';
 import './getpost.css';
 
 interface Post {
@@ -10,7 +10,7 @@ interface Post {
   instructions: string;
   recipeimg: string;
   user: {
-    _id: string; // Add _id to user object
+    _id: string; 
     firstName: string;
     lastName: string;
   };
@@ -48,7 +48,8 @@ function MyPosts() {
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
-      {error && <p>You have not posted anything yet</p>}
+      {error && <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
+      <p>No posts made yet</p> </div>}
       {posts && posts.data.map((post: Post) => (
         <div key={post._id} className="post-style-map">
           <div className="created-by">

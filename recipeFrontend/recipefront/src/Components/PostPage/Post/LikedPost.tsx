@@ -3,7 +3,8 @@ import { useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation } fro
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slices/commentSlice';
 import './getpost.css';
-import PostItem from './PostItem'; // Adjust the path as needed
+import PostItem from './PostItem'; 
+import noPost from '../../../../noPost.jpg'
 
 interface Post {
   _id: string;
@@ -45,20 +46,28 @@ function LikedPosts() {
   const [unfollowUser] = useUnfollowUserMutation();
 
   const handleFollow = async (userIdToFollow: string) => {
+    const previousFollowingIds = [...followingIds];
+    setFollowingIds((prev) => [...prev, userIdToFollow]);
+  
     try {
       await followUser(userIdToFollow).unwrap();
-      setFollowingIds((prev) => [...prev, userIdToFollow]);
     } catch (error) {
+      setFollowingIds(previousFollowingIds);
       console.error('Failed to follow user:', error);
+      message.error('Failed to follow user. Please try again.');
     }
   };
-
+  
   const handleUnfollow = async (userIdToUnfollow: string) => {
+    const previousFollowingIds = [...followingIds];
+    setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
+  
     try {
       await unfollowUser(userIdToUnfollow).unwrap();
-      setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
     } catch (error) {
+      setFollowingIds(previousFollowingIds);
       console.error('Failed to unfollow user:', error);
+      message.error('Failed to unfollow user. Please try again.');
     }
   };
 
@@ -73,7 +82,8 @@ function LikedPosts() {
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
-      {error && <p>You have not liked any post yet</p>}
+      {error && <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
+      <p>No post liked</p> </div>}
       {posts && Array.isArray(posts.data) && posts.data.map((post: Post) => (
         <PostItem
           key={post._id}

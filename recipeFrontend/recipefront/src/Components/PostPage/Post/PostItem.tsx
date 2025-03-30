@@ -19,6 +19,7 @@ interface PostItemProps {
   handleUnfollow: (userId: string) => Promise<void>;
   handleDeletePost: (postId: string) => Promise<void>;
   handleBookmarkPost: (postId: string) => void;
+  bookmarkedPosts?: string[]; 
 }
 
 interface Post {
@@ -66,11 +67,12 @@ const PostItem: React.FC<PostItemProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+const [optimisticBookmarked, setOptimisticBookmarked] = useState(
+    currentUser?.bookmarkedPosts?.includes(post._id) || false
+  );
+  const { data: comments, isLoading: commentsLoading, isError: commentsError } = useGetPostCommentsQuery(post._id);
 
-  const { data: comments, isLoading: commentsLoading, isError: commentsError } = useGetPostCommentsQuery(post._id, {
-    skip: !isExpanded,
-  });
-
+const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
   const [createComment] = useCreateCommentMutation();
 
   const baseUrl = 'http://localhost:3000/';
@@ -88,7 +90,23 @@ const PostItem: React.FC<PostItemProps> = ({
     return `${diffInHours} hours ago`;
   };
 
+  const [likesCount, setLikesCount] = useState(post.likesCount);
+  const [unlikesCount, setUnlikesCount] = useState(post.unlikesCount);
+  const [hasLiked, setHasLiked] = useState(post.likes.includes(currentUser?._id || ''));
+  const [hasUnliked, setHasUnliked] = useState(post.unlikes.includes(currentUser?._id || ''));
+
   const handleUpvote = async () => {
+    if (hasLiked) {
+      setLikesCount((prev) => prev - 1);
+      setHasLiked(false);
+    } else {
+      setLikesCount((prev) => prev + 1);
+      setHasLiked(true);
+      if (hasUnliked) {
+        setUnlikesCount((prev) => prev - 1);
+        setHasUnliked(false);
+      }
+    }
     try {
       await upvote(post._id).unwrap();
     } catch (error) {
@@ -97,6 +115,17 @@ const PostItem: React.FC<PostItemProps> = ({
   };
 
   const handleDownvote = async () => {
+    if (hasUnliked) {
+      setUnlikesCount((prev) => prev - 1);
+      setHasUnliked(false);
+    } else {
+      setUnlikesCount((prev) => prev + 1);
+      setHasUnliked(true);
+      if (hasLiked) {
+        setLikesCount((prev) => prev - 1);
+        setHasLiked(false);
+      }
+    }
     try {
       await downvote(post._id).unwrap();
     } catch (error) {
@@ -177,11 +206,14 @@ const PostItem: React.FC<PostItemProps> = ({
            <span style={{display:'inline-block'}}> <DeleteOutlined /></span> Delete Post
           </p>  
         )}
-        {showBookmark && (
-          <p className="bookmark-post" onClick={handleBookmark} >
-          <span style={{display:'inline-block', }}>  <BookOutlined /> </span> Add to bookmarks
-          </p>
-        )}
+       {showBookmark && (
+  <p className="bookmark-post" onClick={handleBookmark}>
+    <span style={{ display: 'inline-block' }}>
+      <BookOutlined />
+    </span>
+    {isBookmarked ? 'Added to bookmarks' : 'Add to bookmarks'}
+  </p>
+)}
       </Modal>
       <div className="post-attribute">
       </div>
@@ -228,17 +260,18 @@ const PostItem: React.FC<PostItemProps> = ({
       <div style={{ display: 'flex' }}>
       <div style={{ padding: 10 }} className="vote">
   <p onClick={handleUpvote}>
-    <UpvoteIcon className={post.likes.includes(currentUser?._id || '') ? 'voted upvoted' : ''} />
+    <UpvoteIcon className={hasLiked ? 'voted upvoted' : ''} />
   </p>
-  <p>{post.likesCount}</p>
+  <p>{likesCount}</p>
 </div>
 <div style={{ padding: 10 }} className="vote">
   <p onClick={handleDownvote}>
-    <DownvoteIcon className={post.unlikes.includes(currentUser?._id || '') ? 'voted downvoted' : ''} />
+    <DownvoteIcon className={hasUnliked ? 'voted downvoted' : ''} />
   </p>
-  <p>{post.unlikesCount}</p>
+  <p>{unlikesCount}</p>
 </div>
       </div>
+      
       <div className="comment-icon" onClick={() => setIsExpanded(!isExpanded)}>
         <p style={{cursor:'pointer'}}>
          <img src={CommentsIcon} alt="comment icon" /> {comments ? comments.commentData.length : 0} 

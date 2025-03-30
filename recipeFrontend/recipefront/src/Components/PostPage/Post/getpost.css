@@ -4,6 +4,23 @@ width: 100%;
 background-color: #EFE1FF;
 
 }
+.no-post-style{
+    width: 70%;
+    height: 70%;
+    
+}
+.error-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.error-content p{
+   font-size: 32px;
+   font-weight: 500;
+   margin-top: 10px;
+   padding: 10px;
+}
 .delete-post:hover{
     color: rgb(119, 60, 189);
     cursor: pointer;

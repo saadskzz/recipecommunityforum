@@ -17,6 +17,7 @@ import PostByCategory from './Components/PostPage/Post/PostByCategory'
 import UserProfile from './Components/Profile/UserProfile'
 import ChatPage from './Components/Home/ChatPage'
 import Settings from './Settings/Settings'
+import Airesponse from './Components/Home/Airesponse'
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         
           </Route>
           <Route path='/home' element={<ChatPage/>}/>
+          <Route path='airesponse' element={<Airesponse/>}/>
           <Route path='/' element={<Navigate to="/login" />} />
           
          

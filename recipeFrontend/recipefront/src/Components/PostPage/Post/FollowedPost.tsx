@@ -3,7 +3,7 @@ import { useGetFollowedPostsQuery, useLikePostMutation, useUnlikePostMutation } 
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import './getpost.css';
 import PostItem from './PostItem'; 
-
+import noPost from '../../../../noPost.jpg'
 
 interface Post {
   _id: string; 
@@ -101,7 +101,9 @@ function FollowedPost() {
   return (
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
-      {error && <p>No posts Currently by followed People</p>}
+      
+      {error && <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
+        <p>No posts Currently by followed People</p> </div>}
       {posts && posts.data?.length === 0 && <p>No posts from followed users yet.</p>}
       {posts && posts.data?.map((post: Post) => (
         <PostItem

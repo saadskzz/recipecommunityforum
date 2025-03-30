@@ -1,0 +1,125 @@
+/* src/components/HaraBharaKabab.css */
+.recipe-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .breadcrumb {
+    margin-bottom: 20px;
+  }
+  
+  .breadcrumb a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  
+  .recipe-title {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #2c7d2c; /* Green to match vegetarian theme */
+  }
+  
+  .recipe-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 8px;
+  }
+  
+  .recipe-description {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .recipe-meta {
+    margin-bottom: 20px;
+  }
+  
+  .recipe-meta p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .recipe-meta svg {
+    margin-right: 5px;
+    color: #2c7d2c;
+  }
+  
+  h2 {
+    font-size: 1.8em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #2c7d2c;
+  }
+  
+  .ingredients-list,
+  .method-list {
+    margin-bottom: 20px;
+    padding-left: 20px;
+  }
+  
+  .ingredients-list li,
+  .method-list li {
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  
+  .ingredients-list li strong {
+    color: #2c7d2c;
+  }
+  
+  .nutrition-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .nutrition-table th,
+  .nutrition-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .nutrition-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  .recipe-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #777;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .recipe-page {
+      padding: 10px;
+    }
+  
+    .recipe-title {
+      font-size: 2em;
+    }
+  
+    .recipe-image {
+      margin-bottom: 15px;
+    }
+  
+    h2 {
+      font-size: 1.5em;
+    }
+  
+    .recipe-description {
+      font-size: 1em;
+    }
+  }

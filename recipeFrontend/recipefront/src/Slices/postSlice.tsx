@@ -81,8 +81,22 @@ export const postsApi = createApi({
     getPostsByUserId: builder.query({
       query: (userId) => `userposts/${userId}`,
       providesTags: ['Posts'],
-    })
+    }),
+    upvotePost: builder.mutation({
+      query: (id) => ({
+        url: `/${id}/upvote`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Posts'],
+    }),
+    downvotePost: builder.mutation({
+      query: (id) => ({
+        url: `/${id}/downvote`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Posts'],
+    }),
   })
 })
-export const {useGetAllPostsQuery, useCreatePostMutation, useDeleteSelfPostMutation, useGetMyPostsQuery, useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation, useGetFollowedPostsQuery, useGetBookmarkedPostsQuery, useGetPostsByCategoryQuery, useGetPostsByUserIdQuery} = postsApi
+export const {useGetAllPostsQuery, useCreatePostMutation, useDeleteSelfPostMutation, useGetMyPostsQuery, useGetLikedPostsQuery, useLikePostMutation, useUnlikePostMutation, useGetFollowedPostsQuery, useGetBookmarkedPostsQuery, useGetPostsByCategoryQuery, useGetPostsByUserIdQuery, useUpvotePostMutation, useDownvotePostMutation} = postsApi
 

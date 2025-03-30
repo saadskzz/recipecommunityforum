@@ -83,14 +83,14 @@ export const authApi = createApi({
                 method: 'PATCH',
                 body: { bookmarkedPosts: postId } // Ensure this matches the expected parameter in PostItem
             }),
-            invalidatesTags: ['Bookmark'],
+            invalidatesTags: ['Bookmark','User'],
         }),
         showBookmarkPost: builder.query({
             query: () => ({
                 url: '/showbookmark',
                 method: 'GET'
             }),
-            providesTags: ['Bookmark'],
+            providesTags: ['Bookmark','User'],
         }),
         unBookmarkPost: builder.mutation({
             query: (postId) => ({
@@ -98,7 +98,7 @@ export const authApi = createApi({
                 method: 'PATCH',
                 body: { postId } // Ensure this matches the expected parameter in PostItem
             }),
-            invalidatesTags: ['Bookmark'],
+            invalidatesTags: ['Bookmark','User'],
         }),
         uploadProfilePic: builder.mutation({
             query: (formData) => ({

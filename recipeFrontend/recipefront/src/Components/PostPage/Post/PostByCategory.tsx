@@ -6,6 +6,7 @@ import { useGetDiscussionByIdQuery } from '../../../Slices/discussionsApi';
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import PostItem from './PostItem';
 import './getpost.css';
+import noPost from '../../../../noPost.jpg'
 
 interface Post {
   _id: string;
@@ -54,20 +55,28 @@ function PostByCategory() {
   }, [followingData]);
 
   const handleFollow = async (userIdToFollow: string) => {
+    const previousFollowingIds = [...followingIds];
+    setFollowingIds((prev) => [...prev, userIdToFollow]);
+  
     try {
       await followUser(userIdToFollow).unwrap();
-      setFollowingIds((prev) => [...prev, userIdToFollow]);
     } catch (error) {
+      setFollowingIds(previousFollowingIds);
       console.error('Failed to follow user:', error);
+      message.error('Failed to follow user. Please try again.');
     }
   };
-
+  
   const handleUnfollow = async (userIdToUnfollow: string) => {
+    const previousFollowingIds = [...followingIds];
+    setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
+  
     try {
       await unfollowUser(userIdToUnfollow).unwrap();
-      setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
     } catch (error) {
+      setFollowingIds(previousFollowingIds);
       console.error('Failed to unfollow user:', error);
+      message.error('Failed to unfollow user. Please try again.');
     }
   };
 
@@ -111,7 +120,8 @@ function PostByCategory() {
             />
           ))
         ) : (
-          <p>No posts found in this category.</p>
+          <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
+        <p>No posts Currently by followed People</p> </div>
         )}
       </div>
     </div>

@@ -5,7 +5,7 @@ import { useGetPostsByUserIdQuery, useGetLikedPostsQuery } from '../../Slices/po
 import initialProfile from '../../../initialprofile.jpg';
 import initialCoverPic from '../../../initialbackgroundsmall.jpg';
 import PostItem from '../PostPage/Post/PostItem';
-
+import noPost from '../../../noPost.jpg'
 interface User {
   _id: string;
   firstName: string;
@@ -109,7 +109,7 @@ const Profile = () => {
   };
 
   if (isLoading || postsLoading || likedPostsLoading) return <div>Loading profile...</div>;
-  if (isError || postsError || likedPostsError) return <div>Error loading profile. Please try again later.</div>;
+  
 
   return (
     <div className="profile-container">
@@ -246,11 +246,14 @@ const Profile = () => {
         ) : likedPostsLoading ? (
           <p>Loading liked posts...</p>
         ) : likedPostsError ? (
-          <p>Error loading liked posts.</p>
+          <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
+        <p>No posts Currently by followed People</p> </div>
         ) : likedPosts?.data.length > 0 ? (
           likedPosts.data.map((post) => <PostItem key={post._id} post={post} />)
         ) : (
-          <p>No liked posts available.</p>
+          <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
+        <p>No posts Currently by followed People</p> </div>
+        
         )}
       </div>
     </div>

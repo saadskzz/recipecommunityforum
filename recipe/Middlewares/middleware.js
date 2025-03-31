@@ -1,7 +1,7 @@
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
-const User = require('../Models/UserModel');
-const TokenBlacklist = require('../Models/TokenBlacklist'); 
+import 'dotenv/config';
+import jwt from 'jsonwebtoken';
+import User from '../Models/UserModel.js';
+import TokenBlacklist from '../Models/TokenBlacklist.js';
 
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWTSECRET, { expiresIn: '1d' });
@@ -103,4 +103,4 @@ const deleteToken = async (req, res) => {
     }
 };
 
-module.exports = { createToken, checkToken, checkRole, deleteToken };
+export { createToken, checkToken, checkRole, deleteToken };

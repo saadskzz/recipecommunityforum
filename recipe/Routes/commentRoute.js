@@ -1,9 +1,10 @@
-const { createComment, getPostComments } = require('../Controllers/commentController');
-const { checkToken } = require('../Middlewares/middleware');
+import { createComment, getPostComments } from '../Controllers/commentController.js';
+import { checkToken } from '../Middlewares/middleware.js';
+import express from 'express';
 
-const commentRouter = require('express').Router();
+const commentRouter = express.Router();
 
-commentRouter.post('/:postid/createcomment',checkToken,createComment)
-commentRouter.get('/postcomments/:postid',checkToken,getPostComments)
+commentRouter.post('/:postid/createcomment', checkToken, createComment);
+commentRouter.get('/postcomments/:postid', checkToken, getPostComments);
 
-module.exports = commentRouter
+export default commentRouter;

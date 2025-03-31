@@ -1,7 +1,8 @@
-const User = require('../Models/UserModel');
-const bcrypt = require('bcrypt')
-const {createToken} = require('../Middlewares/middleware');
-const PostModel = require('../Models/PostModel');
+import User from '../Models/UserModel.js';
+import bcrypt from 'bcrypt';
+import { createToken } from '../Middlewares/middleware.js';
+import PostModel from '../Models/PostModel.js';
+
 const signUp = async (req, res) => {
 console.log('signup hit')
     const { firstName, lastName, email, password, role,passwordConfirm } = req.body;
@@ -388,7 +389,7 @@ const changePassword = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   signUp,
   login,
   getUserById,

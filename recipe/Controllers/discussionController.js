@@ -1,4 +1,4 @@
-const Discussion = require('../Models/DiscussionForum');
+import Discussion from '../Models/DiscussionForum.js';
 
 
 const createDiscussion = async (req, res) => {
@@ -50,10 +50,4 @@ const deleteDiscussionById = async (req, res) => {
     }
 };
 
-module.exports = {
-    createDiscussion,
-    getAllDiscussions,
-    getDiscussionById,
-  
-    deleteDiscussionById
-};
+export { createDiscussion, getAllDiscussions, getDiscussionById, deleteDiscussionById };

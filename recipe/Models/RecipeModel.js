@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const recipeSchema = new mongoose.Schema({
     user:{
@@ -14,4 +14,4 @@ const recipeSchema = new mongoose.Schema({
     dietary_tags: { type: [String], required: true },
     nutritional_info: {type:String}
 });
-module.exports = mongoose.model('Recipe',recipeSchema)
+export default mongoose.model('Recipe', recipeSchema);

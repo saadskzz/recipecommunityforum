@@ -1,9 +1,9 @@
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
-const User = require('../Models/UserModel');
-const Post = require('../Models/PostModel');
-const createPost = async(req,res)=>{
-       
+import 'dotenv/config';
+import jwt from 'jsonwebtoken';
+import User from '../Models/UserModel.js';
+import Post from '../Models/PostModel.js';
+
+const createPost = async(req,res)=>{       
       const {title,ingredients,instructions,discussionCategory} = req.body;
       const userId = req.user._id; 
       if(!title || !ingredients || !instructions || !discussionCategory){
@@ -280,4 +280,4 @@ const getPostsByUserId = async (req, res) => {
   }
 };
 
-module.exports = { createPost, deleteSelfPost, deleteAnyPost, getAllPosts, getUserPosts, likePost, unlikePost, getLikedPosts, getFollowedUserPosts, getBookmarkedPosts, getPostsByCategory, getPostsByUserId };
+export { createPost, deleteSelfPost, deleteAnyPost, getAllPosts, getUserPosts, likePost, unlikePost, getLikedPosts, getFollowedUserPosts, getBookmarkedPosts, getPostsByCategory, getPostsByUserId };

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose";
 const DiscussionForumSchema = new mongoose.Schema({
     discussionCategory:{
         type:String,
@@ -6,4 +6,4 @@ const DiscussionForumSchema = new mongoose.Schema({
     }
     
 })
-module.exports = mongoose.model('Discussion',DiscussionForumSchema)
+export default mongoose.model('Discussion', DiscussionForumSchema);

@@ -1,10 +1,13 @@
-const { getRecipes, getRecipeById, createRecipe } = require('../Controllers/recipeController');
-const { checkToken } = require('../Middlewares/middleware');
-const upload = require('../Middlewares/multerConfig');
+import { getRecipes, getRecipeById, createRecipe, getUserRecipes } from '../Controllers/recipeController.js';
+import { checkToken } from '../Middlewares/middleware.js';
+import upload from '../Middlewares/multerConfig.js';
+import express from 'express';
 
-const recipeRouter = require('express').Router();
+const recipeRouter = express.Router();
 
-recipeRouter.get('/getrecipes',getRecipes)
-recipeRouter.get('/getonerecipe/:id',getRecipeById)
-recipeRouter.post('/createrecipe',upload.single('image_url'),checkToken,createRecipe);
-module.exports = recipeRouter
+recipeRouter.get('/getrecipes', checkToken, getRecipes);
+recipeRouter.get('/getonerecipe/:id', checkToken, getRecipeById);
+recipeRouter.post('/createrecipe', checkToken, createRecipe);
+recipeRouter.get('/getusersrecipe', checkToken, getUserRecipes);
+
+export default recipeRouter;

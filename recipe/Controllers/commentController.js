@@ -1,5 +1,5 @@
-const Comment = require('../Models/CommentModel')
-const Post = require('../Models/PostModel')
+import Comment from '../Models/CommentModel.js';
+import Post from '../Models/PostModel.js';
 
 const createComment = async(req, res) => {
     const author = req.user._id;
@@ -45,4 +45,4 @@ const getPostComments = async(req, res) => {
     }
 }
 
-module.exports = { createComment, getPostComments }
+export { createComment, getPostComments };

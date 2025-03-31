@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose";
 const PostSchema = new mongoose.Schema({
    // title, ingredients, instructions, recipeimg
    user:{
@@ -26,4 +26,4 @@ instructions: String,
  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Post', PostSchema);
+export default mongoose.model('Post', PostSchema);

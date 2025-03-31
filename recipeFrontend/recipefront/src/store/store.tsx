@@ -4,13 +4,15 @@ import authverifyReducer from "../Slices/authverify";
 import { discussionsApi } from "../Slices/discussionsApi";
 import { postsApi } from "../Slices/postSlice";
 import { commentsApi } from "../Slices/commentSlice"; // Import commentsApi
-
+import {recipeApi} from '../Slices/recipeApi'
 const store = configureStore({
     reducer:{
         [authApi.reducerPath] : authApi.reducer,
         [postsApi.reducerPath] : postsApi.reducer,
         [discussionsApi.reducerPath]: discussionsApi.reducer,
-        [commentsApi.reducerPath]: commentsApi.reducer, // Add commentsApi reducer
+        [commentsApi.reducerPath]: commentsApi.reducer, 
+        [recipeApi.reducerPath]: recipeApi.reducer,
+        // Add commentsApi reducer
         authverify: authverifyReducer, 
     },
     middleware: (getDefaultMiddleware) =>
@@ -18,7 +20,8 @@ const store = configureStore({
             authApi.middleware,
             postsApi.middleware,
             discussionsApi.middleware,
-            commentsApi.middleware // Add commentsApi middleware
+            commentsApi.middleware,// Add commentsApi middleware
+            recipeApi.middleware
         ),
 })
 

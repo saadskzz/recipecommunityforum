@@ -18,6 +18,7 @@ import UserProfile from './Components/Profile/UserProfile'
 import ChatPage from './Components/Home/ChatPage'
 import Settings from './Settings/Settings'
 import Airesponse from './Components/Home/Airesponse'
+import UserRecipes from './Components/Home/UserRecipes'
 
 function App() {
   return (
@@ -27,7 +28,9 @@ function App() {
           <Route path='/signup' element={ <SignUp/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/dashboard' element={<ProtectedRoute><DashboardLayout/></ProtectedRoute>}>
-          
+          <Route path='home' element={<ChatPage/>}/>
+          <Route path='airesponse/:id' element={<Airesponse/>}/>
+          <Route path='userrecipes' element={<UserRecipes/>}/>
           <Route path='forum' element={<ForumPage />} >
           <Route path='allposts' element={<GetPosts/>}/>
           <Route path='followed' element={<FollowedPost/>}/>
@@ -40,8 +43,7 @@ function App() {
           <Route path='profile/:userId' element={<UserProfile/>}/>
         
           </Route>
-          <Route path='/home' element={<ChatPage/>}/>
-          <Route path='airesponse' element={<Airesponse/>}/>
+         
           <Route path='/' element={<Navigate to="/login" />} />
           
          

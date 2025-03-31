@@ -24,12 +24,12 @@ function Sidebar() {
         <main className='sidebar-main'>
           <div style={{backgroundColor:'#CABED90A'}}>
            <div className='sidebar-handle'  >
-            <p 
+         <Link to={'/dashboard/home'}>   <p 
               onClick={() => handleItemClick('Home')} 
               style={{background: activeItem === 'Home' ? "#CABED90A" : "",color:activeItem === 'Home' ? "white" : "#FFFFFF80"}}
             >
               Home
-            </p>
+            </p></Link>
             </div>
             <div className='sidebar-handle'>
        <Link to={'/dashboard/forum/allposts'}>     <p 
@@ -46,6 +46,14 @@ function Sidebar() {
             >
               Your profile
             </p> </Link></div>
+            <div className='sidebar-handle'>
+       <Link to={'/dashboard/userrecipes'}>     <p 
+              onClick={() => handleItemClick('User recipes')} 
+              style={{background: activeItem === 'User recipes' ? "#CABED90A" : "",color:activeItem === 'Forum' ? "white" : "#FFFFFF80"}}
+            >
+              User recipes
+            </p> </Link>
+            </div>
           </div>
         </main>
       

@@ -1,5 +1,4 @@
 import CreatePost from "../Post/CreatePost"
-import GetPosts from "../Post/getPosts"
 import {ThunderboltFilled,UserOutlined,BookFilled,BookOutlined} from '@ant-design/icons'
 import './forumContent.css'
 import CategoryCard from "../DiscussionCategory/CategoryCard"
@@ -19,7 +18,7 @@ function ForumContent() {
         <h1>Forum</h1>
        
        <CreatePost/>
-        <h1>Posts</h1>
+       
         <Outlet />
       </div>
       <div style={{display:'flex',flexDirection:'column',margin:10}}>

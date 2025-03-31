@@ -1,119 +1,68 @@
-
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useGetRecipeByIdQuery } from '../../Slices/recipeApi'; // Adjust import based on your setup
 import './Airesponse.css';
-import recipeImage from '../../../initialprofile.jpg'; 
+import recipeImage from '../../../initialprofile.jpg';
 
-const Airesponse: React.FC = () => {
+const Airesponse = () => {
+  const { id } = useParams<{ id: string }>();
+  const { data: recipe, isLoading, error } = useGetRecipeByIdQuery(id);
+
+  if (isLoading) return <div>Loading recipe...</div>;
+  if (error) return <div>Error loading recipe: {error.message}</div>;
+  if (!recipe) return <div>No recipe found.</div>;
+
   return (
     <div className="recipe-page">
-     
-     
-
-   
-      <h1 className="recipe-title">Hara Bhara Kabab</h1>
-
-   <div style={{display:'flex',alignContent:'center',alignItems:'center'}}>
-      <img src={recipeImage} style={{height:"30%",width:'30%'}} alt="Hara Bhara Kabab" className="recipe-image" />
-
-     
-      <p className="recipe-description" style={{marginLeft:20}}>
-        A delicious and healthy vegetarian snack made with spinach, peas, and
-        potatoes, spiced to perfection and shallow-fried for a crispy finish.
-      </p>
-
+      <h1 className="recipe-title">{recipe.title}</h1>
+      <div style={{ display: 'flex', alignContent: 'center', alignItems: 'center' }}>
+        <img
+          src={recipe.image_url || recipeImage}
+          style={{ height: '30%', width: '30%' }}
+          alt={recipe.title}
+          className="recipe-image"
+        />
+        <p className="recipe-description" style={{ marginLeft: 20 }}>
+          {recipe.description}
+        </p>
       </div>
-     
       <h2>Ingredients</h2>
       <ul className="ingredients-list">
-        <li>
-          <strong>2 cups</strong> spinach, blanched and finely chopped
-        </li>
-        <li>
-          <strong>1 cup</strong> green peas, boiled and mashed
-        </li>
-        <li>
-          <strong>2 medium</strong> potatoes, boiled and mashed
-        </li>
-        <li>
-          <strong>1 tsp</strong> ginger, grated
-        </li>
-        <li>
-          <strong>1 tsp</strong> green chili, finely chopped
-        </li>
-        <li>
-          <strong>2 tbsp</strong> gram flour (besan), roasted
-        </li>
-        <li>
-          <strong>1 tsp</strong> chaat masala
-        </li>
-        <li>
-          <strong>1 tsp</strong> cumin powder
-        </li>
-        <li>
-          <strong>Salt</strong> to taste
-        </li>
-        <li>
-          <strong>2 tbsp</strong> oil, for shallow frying
-        </li>
+        {recipe.ingredients.map((ingredient, index) => (
+          <li key={index}>{ingredient}</li>
+        ))}
       </ul>
-
-     
       <h2>Method</h2>
       <ol className="method-list">
-        <li>
-          In a large mixing bowl, combine the blanched spinach, mashed peas,
-          and mashed potatoes.
-        </li>
-        <li>
-          Add grated ginger, chopped green chili, roasted gram flour, chaat
-          masala, cumin powder, and salt. Mix well to form a uniform mixture.
-        </li>
-        <li>
-          Divide the mixture into equal portions and shape each portion into a
-          flat, round patty.
-        </li>
-        <li>
-          Heat oil in a non-stick pan over medium heat. Shallow fry the patties
-          until golden brown and crispy on both sides, about 3-4 minutes per
-          side.
-        </li>
-        <li>
-          Remove from the pan and drain excess oil on paper towels. Serve hot
-          with mint chutney or yogurt dip.
-        </li>
+        {recipe.instructions.split('\n').map((step, index) => (
+          <li key={index}>{step}</li>
+        ))}
       </ol>
-
-      {/* Nutritional Information */}
-      <h2>Nutritional Information</h2>
-      <table className="nutrition-table">
-        <thead>
-          <tr>
-            <th>Nutrient</th>
-            <th>Amount per serving</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Calories</td>
-            <td>150 kcal</td>
-          </tr>
-          <tr>
-            <td>Protein</td>
-            <td>5g</td>
-          </tr>
-          <tr>
-            <td>Fat</td>
-            <td>7g</td>
-          </tr>
-          <tr>
-            <td>Carbohydrates</td>
-            <td>18g</td>
-          </tr>
-        </tbody>
-      </table>
-
-     
-      
+      {recipe.nutritional_info && (
+        <>
+          <h2>Nutritional Information</h2>
+          {typeof recipe.nutritional_info === 'string' ? (
+            <p>{recipe.nutritional_info}</p>
+          ) : (
+            <table className="nutrition-table">
+              <thead>
+                <tr>
+                  <th>Nutrient</th>
+                  <th>Amount per serving</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(recipe.nutritional_info).map(([key, value], index) => (
+                  <tr key={index}>
+                    <td>{key}</td>
+                    <td>{value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -50,19 +50,19 @@ color: #657786;
   
   .avatar-container {
     position: absolute;
-    bottom: 0px; /* Half of avatar height to overlap banner */
-    left: 15px; /* Left margin like X */
-    width: 140px; /* Similar to X's profile pic size */
+    bottom: 0px; 
+    left: 15px; 
+    width: 140px; 
     height: 140px;
   }
   
   .avatar-container img {
     width: 100%;
     height: 100%;
-    border-radius: 50%; /* Circular avatar like X */
-    border: 4px solid #fff; /* White border like X */
+    border-radius: 50%; 
+    border: 4px solid #fff; 
     object-fit: cover;
-    background-color: #fff; /* Ensures clean edges */
+    background-color: #fff; 
   }
   
   .profile-header {

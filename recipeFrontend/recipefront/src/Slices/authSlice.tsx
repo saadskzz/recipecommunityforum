@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authApi = createApi({
     reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3000/auth", // Fixed the base URL
+        baseUrl: "http://localhost:3000/auth",
         prepareHeaders: async (headers) => {
             const token = localStorage.getItem("token");
             if (token) {
@@ -58,7 +58,7 @@ export const authApi = createApi({
                 method: 'GET'
             }),
             providesTags:(result) => [
-                { type: 'Following' }, // Add the general string tag
+                { type: 'Following' }, 
                 ...(Array.isArray(result) ? result.map(({ id }) => ({ type: 'Following' as const, id })) : [])
             ],
         }),
@@ -81,7 +81,7 @@ export const authApi = createApi({
             query: (postId) => ({
                 url: '/bookmarkpost',
                 method: 'PATCH',
-                body: { bookmarkedPosts: postId } // Ensure this matches the expected parameter in PostItem
+                body: { bookmarkedPosts: postId } 
             }),
             invalidatesTags: ['Bookmark','User'],
         }),
@@ -96,7 +96,7 @@ export const authApi = createApi({
             query: (postId) => ({
                 url: '/unbookmarkpost',
                 method: 'PATCH',
-                body: { postId } // Ensure this matches the expected parameter in PostItem
+                body: { postId }
             }),
             invalidatesTags: ['Bookmark','User'],
         }),
@@ -118,13 +118,13 @@ export const authApi = createApi({
         }),
         getCurrentUser: builder.query({
             query: () => ({
-              url: '/currentuserdata', // Adjust this endpoint based on your backend
+              url: '/currentuserdata', 
               method: 'GET',
             }),
             providesTags: ['User'],
         }),getUserById: builder.query({
             query: (userId) => ({
-              url: `/user/${userId}`, // Assuming backend endpoint /auth/user/:userId
+              url: `/user/${userId}`, 
               method: 'GET'
             }),
             providesTags: (result) => [{ type: 'User', id: result?.data?._id }],

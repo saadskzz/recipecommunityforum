@@ -6,7 +6,7 @@ import Post from '../Models/PostModel.js';
 const createPost = async(req,res)=>{       
       const {title,ingredients,instructions,discussionCategory} = req.body;
       const userId = req.user._id; 
-      if(!title || !ingredients || !instructions || !discussionCategory){
+      if(!title  || !instructions || !discussionCategory){
         return res.status(404).json({
             message: "all fields are required to create a post"
         })

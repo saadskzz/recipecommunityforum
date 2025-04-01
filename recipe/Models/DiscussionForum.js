@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 const DiscussionForumSchema = new mongoose.Schema({
     discussionCategory:{
-        type:String,
-        required:true
+        type: String,
+        unique:true,
+        required: true
     }
     
 })

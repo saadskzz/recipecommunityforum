@@ -1,6 +1,5 @@
 import Discussion from '../Models/DiscussionForum.js';
 
-
 const createDiscussion = async (req, res) => {
     const {discussionCategory} = req.body
     try {
@@ -37,7 +36,6 @@ const getDiscussionById = async (req, res) => {
     }
 };
 
-
 const deleteDiscussionById = async (req, res) => {
     try {
         const discussion = await Discussion.findByIdAndDelete(req.params.id);
@@ -50,4 +48,43 @@ const deleteDiscussionById = async (req, res) => {
     }
 };
 
-export { createDiscussion, getAllDiscussions, getDiscussionById, deleteDiscussionById };
+const initializeDiscussionCategories = async (req, res) => {
+    console.log('Initializing discussion categories...');
+    const categories = ["General", "Cooking", "Diet", "Nutrition", "Recipe"];
+    try {
+        const existingCategories = await Discussion.find({
+            discussionCategory: { $in: categories }
+        });
+
+        console.log('Existing categories:', existingCategories);
+
+        const existingCategoryNames = existingCategories.map(cat => cat.discussionCategory);
+        const newCategories = categories.filter(cat => !existingCategoryNames.includes(cat));
+
+        console.log('New categories to insert:', newCategories);
+
+        const discussions = await Discussion.insertMany(
+            newCategories.map(category => ({ discussionCategory: category }))
+        );
+
+        console.log('Inserted discussions:', discussions);
+
+        res.status(201).json({
+            message: "Categories initialized successfully",
+            discussions
+        });
+    } catch (error) {
+        console.error('Error initializing categories:', error.message);
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+export { 
+    createDiscussion, 
+    getAllDiscussions, 
+    getDiscussionById, 
+    deleteDiscussionById, 
+    initializeDiscussionCategories 
+};

@@ -49,7 +49,7 @@ function Sidebar() {
             <div className='sidebar-handle'>
        <Link to={'/dashboard/userrecipes'}>     <p 
               onClick={() => handleItemClick('User recipes')} 
-              style={{background: activeItem === 'User recipes' ? "#CABED90A" : "",color:activeItem === 'Forum' ? "white" : "#FFFFFF80"}}
+              style={{background: activeItem === 'User recipes' ? "#CABED90A" : "",color:activeItem === 'User recipes' ? "white" : "#FFFFFF80"}}
             >
               User recipes
             </p> </Link>

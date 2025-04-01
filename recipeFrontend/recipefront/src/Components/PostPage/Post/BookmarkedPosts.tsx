@@ -29,6 +29,7 @@ interface Post {
 }
 
 function BookmarkedPosts() {
+
   // Use the correct query from authSlice
   const { data: bookmarkedData, error, isLoading } = useShowBookmarkPostQuery();
   const bookmarkedPosts = bookmarkedData?.user?.bookmarkedPosts.map((post: Post) => ({
@@ -110,14 +111,15 @@ function BookmarkedPosts() {
     }
   };
 
-  return (
+  return (<div>
     <div className="post-style">
       {isLoading && <p>Loading...</p>}
       {error && <p>There are no bookmarks you have made as of now</p>}
+      <h1>Bookmarked Posts</h1>
       {bookmarkedPosts.length > 0 ? (
         bookmarkedPosts.map((post: Post) => (
           <div>
-      <h1>Bookmarked Posts</h1>
+
           <PostItem
             key={post._id}
             post={post}
@@ -136,6 +138,7 @@ function BookmarkedPosts() {
         <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
       <p>No post Bookmarked</p> </div>
       )}
+    </div>
     </div>
   );
 }

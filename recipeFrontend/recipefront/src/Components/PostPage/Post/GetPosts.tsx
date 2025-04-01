@@ -91,15 +91,18 @@ import noPost from '../../../../noPost.jpg'
       }
     };
 
-    return (
+    return (<div>
+        <h1>All posts</h1>
       <div className="post-style">
+       
         {isLoading && <p>Loading...</p>}
         {error && <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
         <p>No posts Currently </p> </div>}
+                    
         {posts &&
           posts.postData.map((post: Post) => (
             <div>
-              <h1>Followed posts</h1>
+
             <PostItem
               key={post._id}
               post={post}
@@ -111,7 +114,9 @@ import noPost from '../../../../noPost.jpg'
               handleBookmarkPost={handleBookmarkPost}
             />
             </div>
+         
           ))}
+             </div>
       </div>
     );
   }

@@ -100,11 +100,11 @@ function PostByCategory() {
 
   if (categoryLoading || postsLoading) return <p>Loading...</p>;
   if (categoryError) return <p>Error fetching category: {(categoryError as any).message}</p>;
-  if (postsError) return <p>Error fetching posts: {(postsError as any).message}</p>;
+ 
 
   return (
     <div>
-      <h2>Posts in {category?.discussionCategory}</h2>
+      <h1>Posts in {category?.discussionCategory}</h1>
       <div className="post-style">
         {posts && posts.length > 0 ? (
           posts.map((post: Post) => (

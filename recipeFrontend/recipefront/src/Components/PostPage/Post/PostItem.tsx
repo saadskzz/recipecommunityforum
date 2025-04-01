@@ -250,6 +250,7 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
       <div className="category-type">
         <p>#{post.discussionCategory.discussionCategory}</p>
       </div>
+      
       <p className="post-title">{post.title}</p>
       <p className="post-description">{post.instructions}</p>
       <div className="postImg" style={{ height: post.recipeimg ? '300px' : 'auto' }}>

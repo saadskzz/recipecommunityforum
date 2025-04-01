@@ -99,14 +99,18 @@ function FollowedPost() {
   };
 
   return (
+    <div>  <h1>Followed Posts</h1>
     <div className="post-style">
+     
       {isLoading && <p>Loading...</p>}
-      
+    
       {error && <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
         <p>No posts Currently by followed People</p> </div>}
+        
       {posts && posts.data?.length === 0 && <p>No posts from followed users yet.</p>}
+      
       {posts && posts.data?.map((post: Post) => (
-        <div> <h1>Followed Posts</h1>
+        <div> 
         <PostItem
           key={post._id}
           post={post}
@@ -120,6 +124,7 @@ function FollowedPost() {
         </div>
       ))}
       
+    </div>
     </div>
   );
 }

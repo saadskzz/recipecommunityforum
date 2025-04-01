@@ -45,7 +45,7 @@ function AddPost() {
     const handleCreateFood = async () => {
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('ingredients', ingredients.join(', '));
+        formData.append('ingredients',JSON.stringify(ingredients));
         formData.append('instructions', instructions); // Ensure this line is correct
         formData.append('discussionCategory', selectedDiscussionCategory);
         if (recipeimg) {

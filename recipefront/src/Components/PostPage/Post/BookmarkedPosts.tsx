@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { message } from 'antd';
 import { useShowBookmarkPostQuery } from '../../../Slices/authSlice'; // Correct import
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation,useUnfollowUserMutation } from '../../../Slices/authSlice';
 import { useUpvotePostMutation, useDownvotePostMutation } from '../../../Slices/postSlice';

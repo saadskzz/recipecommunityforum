@@ -55,7 +55,6 @@ const initializeDiscussionCategories = async (req, res) => {
         const existingCategories = await Discussion.find({
             discussionCategory: { $in: categories }
         });
-
         console.log('Existing categories:', existingCategories);
 
         const existingCategoryNames = existingCategories.map(cat => cat.discussionCategory);

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slices/commentSlice';
+import { useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
 import './getpost.css';
 import CommentsIcon from '../../../../message.svg'
 import upvoteIcon from '../../../../upvotesvg.svg';
@@ -9,7 +10,7 @@ import downvoteIcon from '../../../../downvotesvg.svg';
 import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined } from '@ant-design/icons';
 import PostForm from './PostForm';
 import initialProfile from '../../../../initialprofile.jpg';
-import { message, Modal } from 'antd';
+import { message, Modal, Input } from 'antd';
 
 interface PostItemProps {
   post: Post;
@@ -49,7 +50,39 @@ interface User {
   firstName: string;
   lastName: string;
   profilePic?: string;
+  bookmarkedPosts?: string[];
 }
+
+interface IconProps {
+  className?: string;
+}
+
+interface Comment {
+  _id: string;
+  content: string;
+  author: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    profilePic?: string;
+  };
+  createdAt: string;
+}
+
+// Create a simplified comment form component that wraps PostForm
+const CommentForm = ({ value, onChange, placeholder }: { value: string; onChange: (e: any) => void; placeholder: string }) => {
+  return (
+    <div className='custom-inp'>
+      <Input 
+        size="large" 
+        placeholder={placeholder} 
+        value={value} 
+        onChange={onChange} 
+        className='ant-inp' 
+      />
+    </div>
+  );
+};
 
 const PostItem: React.FC<PostItemProps> = ({
   post,
@@ -60,8 +93,11 @@ const PostItem: React.FC<PostItemProps> = ({
   handleDeletePost,
   handleBookmarkPost,
 }) => {
+  console.log(post,"post")
   const [upvote] = useLikePostMutation();
   const [downvote] = useUnlikePostMutation();
+  const [bookmarkPostMutation] = useBookmarkPostMutation();
+  const [unbookmarkPostMutation] = useUnBookmarkPostMutation();
   const [showDelete, setShowDelete] = useState(false);
   const [showBookmark, setShowBookmark] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -156,10 +192,28 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
     }
   };
 
-  const handleBookmark = () => {
-    handleBookmarkPost(post._id); // Ensure this matches the expected parameter in authSlice
+  const handleBookmark = async () => {
+    const isCurrentlyBookmarked = currentUser?.bookmarkedPosts?.includes(post._id) || optimisticBookmarked;
     
-    message.success('Added to bookmarks');
+    // Toggle optimistic UI update
+    setOptimisticBookmarked(!isCurrentlyBookmarked);
+    
+    try {
+      if (isCurrentlyBookmarked) {
+        // If already bookmarked, then unbookmark
+        await unbookmarkPostMutation(post._id).unwrap();
+        message.success('Removed from bookmarks');
+      } else {
+        // If not bookmarked, then bookmark
+        await bookmarkPostMutation(post._id).unwrap();
+        message.success('Added to bookmarks');
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setOptimisticBookmarked(isCurrentlyBookmarked);
+      console.error('Failed to update bookmark status:', error);
+      message.error('Failed to update bookmark status');
+    }
   };
 
   const showModal = () => {
@@ -175,14 +229,14 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const UpvoteIcon = ({ className }) => (
+  const UpvoteIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} width="25" height="20" viewBox="0 0 24 24">
       <path d="M12 4l-8 8h6v12h4V12h6l-8-8z" />
     </svg>
   );
   
   // Downvote Icon
-  const DownvoteIcon = ({ className }) => (
+  const DownvoteIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} width="25" height="20" viewBox="0 0 24 24">
       <path d="M12 20l8-8h-6V0h-4v12H4l8 8z" />
     </svg>
@@ -209,9 +263,9 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
        {showBookmark && (
   <p className="bookmark-post" onClick={handleBookmark}>
     <span style={{ display: 'inline-block' }}>
-      <BookOutlined />
+      <BookOutlined style={{ color: currentUser?.bookmarkedPosts?.includes(post._id) || optimisticBookmarked ? '#f28123' : 'inherit' }} />
     </span>
-    {isBookmarked ? 'Added to bookmarks' : 'Add to bookmarks'}
+    {currentUser?.bookmarkedPosts?.includes(post._id) || optimisticBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
   </p>
 )}
       </Modal>
@@ -292,18 +346,17 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
                   alt="Profile"
                   className="comment-img"
                 />
-                <PostForm
+                <CommentForm
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Add a comment"
-                  
                 />
                 <button onClick={handleCreateComment} className="submit-comment-btn">
                   add reply
                 </button>
               </div>
               {comments && comments.commentData.length > 0 ? (
-                comments.commentData.map((comment) => (
+                comments.commentData.map((comment: Comment) => (
                   <div key={comment._id} className="comment">
                     <div style={{ display: 'flex' }}>
                       <img

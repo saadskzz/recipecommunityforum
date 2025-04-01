@@ -1,4 +1,5 @@
   import { useState, useEffect } from 'react';
+  import { message } from 'antd';
   import { useGetAllPostsQuery, useDeleteSelfPostMutation } from '../../../Slices/postSlice';
   import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation, useBookmarkPostMutation } from '../../../Slices/authSlice'; // Add useBookmarkPostMutation
   import './getpost.css';

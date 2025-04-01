@@ -24,12 +24,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('connected', async () => {
     console.log('connected to database');
     console.log('Initializing discussion categories...');
-    try {
-        await initializeDiscussionCategories({}, null); // Pass `null` for `res` during server startup
-        console.log('Discussion categories initialized successfully.');
-    } catch (error) {
-        console.error('Error initializing discussion categories:', error.message);
-    }
 });
 
 app.use('/auth', authRoute);

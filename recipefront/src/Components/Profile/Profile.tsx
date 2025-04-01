@@ -247,7 +247,7 @@ const Profile = () => {
           <p>Loading liked posts...</p>
         ) : likedPostsError ? (
           <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
-        <p>No posts Currently by followed People</p> </div>
+        <p>No posts liked!</p> </div>
         ) : likedPosts?.data.length > 0 ? (
           likedPosts.data.map((post) => <PostItem key={post._id} post={post} />)
         ) : (

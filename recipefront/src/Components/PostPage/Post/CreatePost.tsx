@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import './createPost.css';
 import AddPost from './AddPost';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 
 function CreatePost() {
   const [addPost, SetAddPost] = useState(false);
+
+  const handlePostSuccess = () => {
+    message.success('Post created successfully');
+    SetAddPost(false);
+  };
+
+  const handlePostError = (errorMessage: string) => {
+    message.error(errorMessage || 'Failed to create post');
+  };
 
   return (
     <div className="createPost">
@@ -18,7 +27,11 @@ function CreatePost() {
           footer={null}
           title="Create a Post"
         >
-          <AddPost onCancel={() => SetAddPost(false)} />
+          <AddPost 
+            onCancel={() => SetAddPost(false)} 
+            onSuccess={handlePostSuccess}
+            onError={handlePostError}
+          />
         </Modal>
       )}
     </div>

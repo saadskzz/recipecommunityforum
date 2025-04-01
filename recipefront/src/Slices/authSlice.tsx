@@ -19,7 +19,7 @@ export const authApi = createApi({
                 url: `/follow/${userIdToFollow}`,
                 method: 'PATCH'
             }),
-            invalidatesTags: ['Following'],
+            invalidatesTags: ['Following','User'],
         }),
         unfollowUser: builder.mutation({
             query: (userIdToUnfollow) => ({

@@ -6,19 +6,25 @@ import Post from '../Models/PostModel.js';
 const createPost = async(req,res)=>{       
       const {title,ingredients,instructions,discussionCategory} = req.body;
       const userId = req.user._id; 
-      if(!title  || !instructions || !discussionCategory){
+      if(!title || !discussionCategory){
         return res.status(404).json({
-            message: "all fields are required to create a post"
+            message: "Title and discussion category are required to create a post"
         })
       }
       
- const postData = new Post({title,ingredients,instructions, user: userId,discussionCategory})
+ const postData = new Post({
+   title,
+   ingredients: ingredients || [],
+   instructions: instructions || '',
+   user: userId,
+   discussionCategory
+ })
  console.log(userId)
       if (req.file) {
         postData.recipeimg = req.file.path;
       }
     
-       try{
+      try{
      await postData.save();
      return res.status(200).json({
         status:"success",
@@ -250,7 +256,8 @@ const getPostsByCategory = async (req, res) => {
   try {
     const posts = await Post.find({ discussionCategory: categoryId }).populate('user').populate('discussionCategory');
     if (!posts.length) {
-      return res.status(404).json({ message: "No posts found for this category" });
+      return res.status(200).json({ status: "success",
+        data: posts });
     }
 
     return res.status(200).json({

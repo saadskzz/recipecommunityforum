@@ -9,8 +9,14 @@ title:{
     type: String,
     required:true
 },
-ingredients:[String],
-instructions: String,
+ingredients:{
+    type: [String],
+    default: []
+},
+instructions: {
+    type: String,
+    default: ''
+},
  recipeimg :{
     type :String
  }
@@ -19,7 +25,8 @@ instructions: String,
  likesCount: { type: Number, default: 0 },
  discussionCategory:{
    type:mongoose.Schema.Types.ObjectId,
-   ref:'Discussion'
+   ref:'Discussion',
+   required: true
  },
  unlikes:[{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
  unlikesCount: { type: Number, default: 0 },

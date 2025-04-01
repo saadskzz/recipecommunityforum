@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import CustomInput from '../../CustomInput';
 import '../Post/addpost.css';
 import { Input, message } from 'antd';
@@ -12,9 +12,15 @@ interface Categoryfields {
   discussionCategory:string
 }
 
+interface AddPostProps {
+    onCancel: () => void;
+    onSuccess: () => void;
+    onError: (errorMessage: string) => void;
+}
+
 const { TextArea } = Input;
 
-function AddPost() {
+function AddPost({ onCancel, onSuccess, onError }: AddPostProps) {
     const [title, setTitle] = useState('');
     const [ingredients, setIngredients] = useState<string[]>([]);
     const [instructions, setInstructions] = useState('');
@@ -40,24 +46,53 @@ function AddPost() {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-    console.log(title,'titile',ingredients,'ing','instructions',instructions,recipeimg,'recipe',selectedCategory,selectedDiscussionCategory)
+    const resetForm = () => {
+        setTitle('');
+        setIngredients([]);
+        setInstructions('');
+        setRecipeimg(null);
+        setSelectedDiscussionCategory('');
+        setSelectedCategory('');
+        setSuccessMessage('');
+    };
 
     const handleCreateFood = async () => {
+        if (!title) {
+            message.error('Title is required');
+            return;
+        }
+        
+        if (!selectedDiscussionCategory) {
+            message.error('Please select a category');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('ingredients',JSON.stringify(ingredients));
-        formData.append('instructions', instructions); // Ensure this line is correct
+        
+        if (ingredients.length > 0) {
+            formData.append('ingredients', JSON.stringify(ingredients));
+        }
+        
+        if (instructions) {
+            formData.append('instructions', instructions);
+        }
+        
         formData.append('discussionCategory', selectedDiscussionCategory);
+        
         if (recipeimg) {
             formData.append('recipeimg', recipeimg, 'recipeimg.jpg');
         }
+        
         try {
-            const response = await createPost( formData );
+            const response = await createPost(formData);
             console.log('Response:', response);
             setSuccessMessage('Post created successfully');
-            message.success('Post created successfully');
+            resetForm();
+            onSuccess();
         } catch (error) {
             console.log('Error:', error);
+            onError('Failed to create post. Please try again.');
         }
     };
 
@@ -66,11 +101,13 @@ function AddPost() {
         setSelectedDiscussionCategory(categoryId);
         console.log(selectedDiscussionCategory);
     };
-
-    const handleCloseModal = () => {
-        
-    };
-
+useEffect(()=>{
+    console.log("triggered",categories)
+    if(categories.length){
+        console.log("triggered")
+        handleCategoryClick(categories[0]._id);
+    }
+},[categories])
     return (
         <div className='post-modal-content'>
             <p>Title</p>
@@ -80,21 +117,20 @@ function AddPost() {
                 name="title"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
             />
-            <p>Ingredients</p>
+            <p>Ingredients (Optional)</p>
             <CustomInput
                 placeholder="Ingredients"
                 value={ingredients.join(', ')}
                 name="ingredients"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setIngredients(e.target.value.split(', '))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setIngredients(e.target.value ? e.target.value.split(', ') : [])}
             />
-           <p>Description</p>
+            <p>Description (Optional)</p>
             <TextArea
                 rows={4}
                 value={instructions}
                 name="instructions"
-                placeholder="add instructions"
+                placeholder="add instructions (optional)"
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInstructions(e.target.value)}
-               
             />
             <p style={{marginTop:20}}>Choose Category</p>
                <div className="categorystyle">
@@ -143,7 +179,7 @@ function AddPost() {
          
             <div style={{display:'flex',justifyContent:'space-between'}}>
                
-                <CustomButton btnTxt="Cancel" onClick={handleCloseModal} backgroundColor="#EFE1FF" color="#773CBD" margin="0px 0px 0px 10px" />
+                <CustomButton btnTxt="Cancel" onClick={onCancel} backgroundColor="#EFE1FF" color="#773CBD" margin="0px 0px 0px 10px" />
                
             <CustomButton btnTxt="submit" onClick={handleCreateFood} backgroundColor="#6521B5" color="#FFFFFF" margin="0 0 0 10px" />
          

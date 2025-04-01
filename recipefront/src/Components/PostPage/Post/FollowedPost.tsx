@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useGetFollowedPostsQuery, useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
-import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
+  import { useGetFollowedPostsQuery, useLikePostMutation, useUnlikePostMutation, useDeleteSelfPostMutation } from '../../../Slices/postSlice';
+import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation, useBookmarkPostMutation } from '../../../Slices/authSlice';
 import './getpost.css';
 import PostItem from './PostItem'; 
 import noPost from '../../../../noPost.jpg'
@@ -41,7 +41,7 @@ interface UserResponse {
 function FollowedPost() {
   const [downvote] = useUnlikePostMutation();
   const [upvote] = useLikePostMutation();
-
+  const [deletePost] = useDeleteSelfPostMutation();
   
   const handleUpvote = async (id: string) => {
     await upvote({ id });
@@ -68,7 +68,7 @@ function FollowedPost() {
 
   const [followUser] = useFollowUserMutation();
   const [unfollowUser] = useUnfollowUserMutation();
-
+  const [bookmarkPost] = useBookmarkPostMutation();
   const handleFollow = async (userIdToFollow: string) => {
     try {
       await followUser(userIdToFollow).unwrap();
@@ -89,13 +89,22 @@ function FollowedPost() {
 
 
   const handleDeletePost = async (postId: string) => {
-    console.log('Delete post:', postId);
+    try {
+      await deletePost(postId).unwrap();
+      console.log('Post deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+    }
   
   };
 
-  const handleBookmarkPost = (postId: string) => {
-    console.log('Bookmark post:', postId);
- 
+  const handleBookmarkPost = async (postId: string) => {
+    try {
+      await bookmarkPost(postId).unwrap();
+      console.log('Bookmarked post:', postId);
+    } catch (error) {
+      console.error('Failed to bookmark post:', error);
+    }
   };
 
   return (

@@ -1,66 +1,58 @@
 import { useState } from 'react'
 import './sidebar.css'
-import { HomeFilled, HomeTwoTone, SettingOutlined, SettingTwoTone } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
-import Home from '../../../../Home.svg'
+import { FiHome, FiBookmark, FiUsers, FiUser, FiSettings, FiBook, FiHeart, FiMessageCircle } from 'react-icons/fi'
+import { MdOutlineFoodBank } from 'react-icons/md'
 
 function Sidebar() {
-  const [activeItem, setActiveItem] = useState<string>('Forum')
+  const [activeItem, setActiveItem] = useState<string>('Home')
 
   const handleItemClick = (item: string) => {
     setActiveItem(item)
   }
 
+  const navItems = [
+    { name: 'Home', icon: <FiHome size={20} />, path: '/dashboard/home' },
+    { name: 'Discover Recipes', icon: <MdOutlineFoodBank size={20} />, path: '/dashboard/forum/allposts' },
+    { name: 'My Cookbook', icon: <FiBook size={20} />, path: '/dashboard/userrecipes' },
+    { name: 'Favorites', icon: <FiHeart size={20} />, path: '/dashboard/forum/bookmarkposts' },
+    { name: 'Following', icon: <FiUsers size={20} />, path: '/dashboard/forum/followed' },
+    { name: 'Community', icon: <FiMessageCircle size={20} />, path: '/dashboard/forum' },
+    { name: 'Profile', icon: <FiUser size={20} />, path: '/dashboard/profile' },
+  ]
+
   return (
     <aside className="sidebar">
       <div className='sidebar-content'>
-        <header className='sidebar-head' style={{ color: 'white' }}>
-       <img src={Home} alt="home pic" style={{ fontSize: 20, color: 'white',marginLeft:5,marginRight:5 }} />   
+        <header className='sidebar-head'>
+          <MdOutlineFoodBank size={24} />
           <div className='sidebar-p'>
-            <p>pVSE</p>
-            <p>--</p>
+            <p>Recipe Community</p>
           </div>
         </header>
         <main className='sidebar-main'>
-          <div style={{backgroundColor:'#CABED90A'}}>
-           <div className='sidebar-handle'  >
-         <Link to={'/dashboard/home'}>   <p 
-              onClick={() => handleItemClick('Home')} 
-              style={{background: activeItem === 'Home' ? "#CABED90A" : "",color:activeItem === 'Home' ? "white" : "#FFFFFF80"}}
-            >
-              Home
-            </p></Link>
-            </div>
-            <div className='sidebar-handle'>
-       <Link to={'/dashboard/forum/allposts'}>     <p 
-              onClick={() => handleItemClick('Forum')} 
-              style={{background: activeItem === 'Forum' ? "#CABED90A" : "",color:activeItem === 'Forum' ? "white" : "#FFFFFF80"}}
-            >
-              Forum
-            </p> </Link>
-            </div>
-            <div className='sidebar-handle'>
-      <Link to={'/dashboard/profile'}>      <p 
-              onClick={() => handleItemClick('Your profile')} 
-              style={{background: activeItem === 'Your profile' ? "#CABED90A" : "",color:activeItem === 'Your profile' ? "white" : "#FFFFFF80"}}
-            >
-              Your profile
-            </p> </Link></div>
-            <div className='sidebar-handle'>
-       <Link to={'/dashboard/userrecipes'}>     <p 
-              onClick={() => handleItemClick('User recipes')} 
-              style={{background: activeItem === 'User recipes' ? "#CABED90A" : "",color:activeItem === 'User recipes' ? "white" : "#FFFFFF80"}}
-            >
-              User recipes
-            </p> </Link>
-            </div>
-          </div>
+          <nav className='nav-menu'>
+            {navItems.map((item) => (
+              <Link to={item.path} key={item.name}>
+                <div 
+                  className={`sidebar-item ${activeItem === item.name ? 'active' : ''}`}
+                  onClick={() => handleItemClick(item.name)}
+                >
+                  <span className="item-icon">{item.icon}</span>
+                  <span className="item-name">{item.name}</span>
+                </div>
+              </Link>
+            ))}
+          </nav>
         </main>
-      
       </div>
       <div className='settings'>
-     <Link to={'/dashboard/settings'}> <p> <SettingTwoTone twoToneColor={'white'}/><span style={{marginLeft:5}}> Settings</span></p>
-     </Link>  
+        <Link to={'/dashboard/settings'}>
+          <div className="sidebar-item">
+            <span className="item-icon"><FiSettings size={20} /></span>
+            <span className="item-name">Settings</span>
+          </div>
+        </Link>
       </div>
     </aside>
   )

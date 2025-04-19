@@ -41,3 +41,126 @@
 text-decoration: none;
 color: #696F77;
 }
+
+.forum-content-style{
+    display: flex;
+    flex-direction: column;
+}
+
+.forum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.forum-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.create-recipe-btn {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.create-recipe-btn:hover {
+    background-color: #d35400;
+}
+
+.forum-tabs {
+    margin-bottom: 1.5rem;
+}
+
+.forum-tabs .ant-tabs-tab {
+    padding: 0.75rem 1rem;
+}
+
+.forum-tabs .ant-tabs-tab-active {
+    color: #e67e22;
+}
+
+.forum-tabs .ant-tabs-ink-bar {
+    background-color: #e67e22;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.category-tag {
+    padding: 0.5rem 1rem;
+    background-color: rgba(230, 126, 34, 0.1);
+    color: #e67e22;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.category-tag:hover {
+    background-color: rgba(230, 126, 34, 0.2);
+}
+
+.category-tag.active {
+    background-color: #e67e22;
+    color: white;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+    background-color: #f9f5f1;
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.empty-state h4 {
+    margin: 1rem 0;
+    color: #555;
+    font-size: 1.25rem;
+}
+
+.empty-state-image {
+    max-width: 200px;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .forum-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .category-list {
+        gap: 0.5rem;
+    }
+    
+    .category-tag {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}

@@ -15,7 +15,7 @@ import FollowedPost from './Components/PostPage/Post/FollowedPost'
 import BookmarkedPosts from './Components/PostPage/Post/BookmarkedPosts'
 import PostByCategory from './Components/PostPage/Post/PostByCategory'
 import UserProfile from './Components/Profile/UserProfile'
-import ChatPage from './Components/Home/ChatPage'
+import HomePage from './Components/Home/ChatPage'
 import Settings from './Settings/Settings'
 import Airesponse from './Components/Home/Airesponse'
 import UserRecipes from './Components/Home/UserRecipes'
@@ -28,7 +28,7 @@ function App() {
           <Route path='/signup' element={ <SignUp/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/dashboard' element={<ProtectedRoute><DashboardLayout/></ProtectedRoute>}>
-          <Route path='home' element={<ChatPage/>}/>
+          <Route path='home' element={<HomePage/>}/>
           <Route path='airesponse/:id' element={<Airesponse/>}/>
           <Route path='userrecipes' element={<UserRecipes/>}/>
           <Route path='forum' element={<ForumPage />} >

@@ -1,7 +1,72 @@
-.pageContainer{
-    display: flex;
+.pageContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9f5f1;
 }
-.main-content{
-    width: 100%;
-    margin-left: 283px;
+
+.sidebar-container {
+  flex: 0 0 240px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.logo-section h1 {
+  margin: 0;
+  color: #e67e22;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.search-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.create-recipe-btn {
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-recipe-btn:hover {
+  background-color: #d35400;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
 }

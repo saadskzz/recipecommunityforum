@@ -1,69 +1,86 @@
-.sidebar{
+.sidebar {
     height: 100vh;
-    background-color: #142139;
-    width: 283px;
-position: fixed;
-z-index: 10;
-padding: 20px;
-
-}
-/* //#CABED90A */
-.sidebar-content{
- border-radius: 4px;
- background-color: #CABED90A;
-}
-.settings p{
-    margin-bottom: 10px;
-    font-weight: 500;
-    font-size: 18px;
-    font-family:'Roboto', sans-serif;
-    color: #94989E;
-    padding: 8px;
-   margin-top: 10px;
-    padding-right: 12px;
-    cursor: pointer;
-}
-.sidebar-head{
+    background-color: #ffffff;
+    width: 240px;
     display: flex;
-    background-color: #773CBD;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-head {
+    display: flex;
     align-items: center;
-  padding: 10px;
-    font-family: 'Roboto', sans-serif;
-    color: #FFFFFF;
-    border-radius: 4px;
+    padding: 1.5rem 1rem;
+    background-color: #e67e22;
+    color: white;
 }
-a{
+
+.sidebar-p {
+    margin-left: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.sidebar-p p {
+    margin: 0;
+}
+
+.sidebar-main {
+    flex: 1;
+    padding: 1.5rem 0;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: #555;
+    transition: all 0.2s;
+    border-radius: 0 20px 20px 0;
+    margin-right: 10px;
+}
+
+.sidebar-item:hover {
+    background-color: rgba(230, 126, 34, 0.1);
+    color: #e67e22;
+}
+
+.sidebar-item.active {
+    background-color: rgba(230, 126, 34, 0.15);
+    color: #e67e22;
+    font-weight: 600;
+}
+
+.item-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.item-name {
+    font-size: 0.95rem;
+}
+
+.settings {
+    padding: 1.5rem 0;
+    border-top: 1px solid #eee;
+}
+
+a {
     text-decoration: none;
-}
-.sidebar-main{
-  border-radius: 4px;
-    z-index: 1;   
-}
-.sidebar-main p{
-     margin-bottom: 10px;
-     font-weight: 500;
-     font-size: 18px;
-     font-family:'Roboto', sans-serif;
-     color: #FFFFFF80;
-     padding: 8px;
-     padding-left: 40px;
-     padding-right: 12px;
-     
-    
-    
-   
-}
-.sidebar-handle{
-    margin-top: 2px;
-    margin-bottom: 2px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-.sidebar-p{
-   display: flex;
-   justify-content: space-between;
-   flex: 1;
-   margin: 5px;
-   font-family:'Roboto', sans-serif;
-   
+    color: inherit;
 }

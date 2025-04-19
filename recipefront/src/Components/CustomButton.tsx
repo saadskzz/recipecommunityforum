@@ -6,28 +6,38 @@ interface ButtonProps {
   btnTxt: ReactNode;
   fontSize?: string;
   backgroundColor?: string;
-  color?: string; // Add color property
-  margin?: string; // Add margin property
-  onClick?: () => void; // Make onClick optional
+  color?: string;
+  margin?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  htmlType?: "button" | "submit" | "reset";
+  type?: "primary" | "default" | "dashed" | "link" | "text";
+  icon?: ReactNode;
 }
 
-function CustomButton({ btnTxt, onClick, fontSize = '20px', backgroundColor = 'transparent', color = 'white', margin = '0' }: ButtonProps) { // Default color to 'white', Default margin to '0'
+function CustomButton({
+  btnTxt,
+  onClick,
+  disabled = false,
+  htmlType = 'submit',
+  icon,
+}: ButtonProps) {
   return (
-    <div className='custom-button' style={{ backgroundColor, margin }}> {/* Apply margin */}
-      <Button 
-        type="primary" 
-        size='large' 
-        className='btn' 
-        block 
-        htmlType='submit' 
-        onClick={onClick} 
-        ghost 
-        style={{ color, border: 'none', fontSize, backgroundColor: 'transparent' }} // Apply color
+    <div className={`custom-button ${disabled ? 'disabled-btn' : ''}`}>
+      <Button
+        type="primary"
+        size="large"
+        className="btn"
+        block
+        htmlType={htmlType}
+        onClick={onClick}
+        disabled={disabled}
+        icon={icon}
       >
         {btnTxt}
       </Button>
     </div>
-  )
+  );
 }
 
 export default CustomButton

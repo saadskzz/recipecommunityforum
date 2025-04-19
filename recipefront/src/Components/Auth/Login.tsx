@@ -1,92 +1,126 @@
 import CustomButton from "../CustomButton"
 import CustomInput from "../CustomInput"
 import "./login.css"
-import '../../../authrec.png'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom"
-import {useLoginUserMutation} from '../../Slices/authSlice'
-import AuthRec from '../../../authrec.png'
+import { useLoginUserMutation } from '../../Slices/authSlice'
 import { useDispatch } from 'react-redux';
-import { loginSuccess,verifyToken } from '../../Slices/authverify';
+import { loginSuccess, verifyToken } from '../../Slices/authverify';
 import { useState } from 'react';
+import { MdOutlineFoodBank } from 'react-icons/md';
 
 interface LoginForm {
-    email:String,
-    password:String
+    email: string,
+    password: string
 }
-function Login() {
-const [userLogin] = useLoginUserMutation();
-const navigate = useNavigate();
-const dispatch = useDispatch();
-const [errorMessage, setErrorMessage] = useState<string | null>(null);
-const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const { control, handleSubmit } = useForm({
+function Login() {
+    const [userLogin] = useLoginUserMutation();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    const { control, handleSubmit, formState: { isValid } } = useForm({
         defaultValues: {
-        email:"",
-        password:""
+            email: "",
+            password: ""
         },
-      })
-      const onSubmit: SubmitHandler<LoginForm> = async ({ email, password }: LoginForm) => {
+        mode: "onChange"
+    })
+
+    const onSubmit: SubmitHandler<LoginForm> = async ({ email, password }: LoginForm) => {
         try {
-          const result = await userLogin({ email, password });
-          const { data, error } = result;
-          if (error) {
-            console.error('Login failed:', error);
-            setErrorMessage('Email or password is incorrect');
-            setSuccessMessage(null);
-            return;
-          }
-          if (data) {
-            if(data.token){
-              dispatch(loginSuccess({ token: data.token, userData: data }));
-              dispatch(verifyToken({token:data.token}));
-              setSuccessMessage('Logged in successfully');
-              setErrorMessage(null);
-              navigate('/dashboard/forum/allposts'); 
+            const result = await userLogin({ email, password });
+            const { data, error } = result;
+            if (error) {
+                console.error('Login failed:', error);
+                setErrorMessage('Email or password is incorrect');
+                setSuccessMessage(null);
+                return;
             }
-          } else {
-            console.error('No data received');
-            setErrorMessage('Email or password is incorrect');
-            setSuccessMessage(null);
-          }
+            if (data) {
+                if (data.token) {
+                    dispatch(loginSuccess({ token: data.token, userData: data }));
+                    dispatch(verifyToken({ token: data.token }));
+                    setSuccessMessage('Logged in successfully');
+                    setErrorMessage(null);
+                    navigate('/dashboard/home');
+                }
+            } else {
+                console.error('No data received');
+                setErrorMessage('Email or password is incorrect');
+                setSuccessMessage(null);
+            }
         } catch (err) {
-          console.error('An unexpected error occurred:', err);
-          setErrorMessage('An unexpected error occurred');
-          setSuccessMessage(null);
+            console.error('An unexpected error occurred:', err);
+            setErrorMessage('An unexpected error occurred');
+            setSuccessMessage(null);
         }
-      }
-  return (
-    <div>
-      <div className="auth-image-div">
-      <img src={AuthRec} alt="rectangle in auth" className="rec-image-div"/> 
-      </div>
-<div className="auth-input">
-    <div className="inp-form-style">
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="email"
-        control={control}
-        render={({ field }) => <CustomInput {...field} type="email" placeholder="enter email"/>}
-      />
-      <Controller
-        name="password"
-        control={control}
-        render={({ field }) => <CustomInput {...field} type="password" placeholder="password enter"/>}
-      />
-  <CustomButton btnTxt='login' backgroundColor="#773CBD"/>
-  {errorMessage && <p className="error-message" style={{color:"red"}}>{errorMessage}</p>}
-  {successMessage && <p className="success-message" style={{color:"green"}}>{successMessage}</p>}
-    </form>
-    <div  className='signup-link'>
-    <p>Don't have an account? </p>
-    <Link to={'/signup'}>Register now</Link>
-    </div>
-    </div>
+    }
     
-    </div>
-    </div>
-  )
+    return (
+        <div className="auth-input">
+            <div className="inp-form-style">
+                <div className="logo-container">
+                    <MdOutlineFoodBank size={40} color="#e67e22" />
+                    <h2 className="logo-text">RecipeCommunity</h2>
+                </div>
+                <h1 className="auth-title">Welcome Back</h1>
+                <p className="auth-subtitle">Sign in to continue to your account</p>
+                
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Controller
+                        name="email"
+                        control={control}
+                        rules={{
+                            required: "Email is required",
+                            pattern: {
+                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                message: "Invalid email address"
+                            }
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                            <CustomInput
+                                {...field}
+                                type="email"
+                                placeholder="Enter your email"
+                                error={error?.message}
+                                name={field.name}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="password"
+                        control={control}
+                        rules={{ required: "Password is required" }}
+                        render={({ field, fieldState: { error } }) => (
+                            <CustomInput
+                                {...field}
+                                type="password"
+                                placeholder="Enter your password"
+                                error={error?.message}
+                                name={field.name}
+                            />
+                        )}
+                    />
+
+                    <CustomButton 
+                        btnTxt='Login'
+                        disabled={!isValid}
+                    />
+                    
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
+                    {successMessage && <p className="success-message">{successMessage}</p>}
+                </form>
+                
+                <div className='signup-link'>
+                    <p>Don't have an account?</p>
+                    <Link to={'/signup'}>Register now</Link>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default Login

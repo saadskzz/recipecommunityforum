@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
 import { useGetPostCommentsQuery, useCreateCommentMutation, useDeleteCommentMutation } from '../../../Slices/commentSlice';
 import { useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
 import './getpost.css';
-import CommentsIcon from '../../../../message.svg'
-import upvoteIcon from '../../../../upvotesvg.svg';
-import downvoteIcon from '../../../../downvotesvg.svg';
-import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined } from '@ant-design/icons';
+import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined, ClockCircleOutlined, TeamOutlined, HeartOutlined, HeartFilled, BookFilled, MoreOutlined, LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 import PostForm from './PostForm';
 import initialProfile from '../../../../initialprofile.jpg';
-import { message, Modal, Input } from 'antd';
+import { message, Modal, Input, Avatar, Tooltip, Divider, Tag, Button, Spin } from 'antd';
 
 interface PostItemProps {
   post: Post;
@@ -66,7 +63,14 @@ interface Comment {
     lastName: string;
     profilePic?: string;
   };
+  post: string;
   createdAt: string;
+  __v: number;
+}
+
+interface CommentResponse {
+  status: string;
+  commentData: Comment[];
 }
 
 // Create a simplified comment form component that wraps PostForm
@@ -93,7 +97,6 @@ const PostItem: React.FC<PostItemProps> = ({
   handleDeletePost,
   handleBookmarkPost,
 }) => {
-  console.log(post,"post")
   const [upvote] = useLikePostMutation();
   const [downvote] = useUnlikePostMutation();
   const [bookmarkPostMutation] = useBookmarkPostMutation();
@@ -102,14 +105,14 @@ const PostItem: React.FC<PostItemProps> = ({
   const [showBookmark, setShowBookmark] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [newComment, setNewComment] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-const [optimisticBookmarked, setOptimisticBookmarked] = useState(
+  const [showComments, setShowComments] = useState(false);
+  const [optimisticBookmarked, setOptimisticBookmarked] = useState(
     currentUser?.bookmarkedPosts?.includes(post._id) || false
   );
-  const { data: comments, isLoading: commentsLoading, isError: commentsError } = useGetPostCommentsQuery(post._id);
+  const { data: commentsResponse, isLoading: commentsLoading, isError: commentsError, refetch: refetchComments } = useGetPostCommentsQuery(post._id);
   const [deleteComment] = useDeleteCommentMutation();
 
-const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
+  const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
   const [createComment] = useCreateCommentMutation();
 
   const baseUrl = 'http://localhost:3000/';
@@ -120,11 +123,15 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
     const diffInMs = now.getTime() - date.getTime();
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInMinutes < 60) {
       return `${diffInMinutes} minutes ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hours ago`;
+    } else {
+      return `${diffInDays} days ago`;
     }
-    return `${diffInHours} hours ago`;
   };
 
   const [likesCount, setLikesCount] = useState(post.likesCount);
@@ -176,8 +183,11 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
       try {
         await createComment({ postId: post._id, content }).unwrap();
         setNewComment('');
+        message.success('Comment added');
+        refetchComments();
       } catch (error) {
         console.error('Failed to create comment:', error);
+        message.error('Failed to add comment');
       }
     }
   };
@@ -186,6 +196,7 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
     try {
       await deleteComment(commentId).unwrap();
       message.success('Comment deleted successfully');
+      refetchComments();
     } catch (error) {
       console.error('Failed to delete comment:', error);
       message.error('Failed to delete comment');
@@ -193,213 +204,262 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
   };
 
   const handleDelete = async () => {
-    console.log('Delete clicked for post:', post._id);
     try {
       await handleDeletePost(post._id);
-      console.log('Post deleted successfully:', post._id);
-      message.success('Post is deleted successfully');
+      message.success('Recipe deleted successfully');
     } catch (error) {
-      console.error('Failed to delete post:', error);
+      console.error('Failed to delete recipe:', error);
+      message.error('Failed to delete recipe');
     }
   };
 
   const handleBookmark = async () => {
-    const isCurrentlyBookmarked = currentUser?.bookmarkedPosts?.includes(post._id) || optimisticBookmarked;
-    
-    // Toggle optimistic UI update
-    setOptimisticBookmarked(!isCurrentlyBookmarked);
-    
+    setOptimisticBookmarked(!optimisticBookmarked);
     try {
-      if (isCurrentlyBookmarked) {
-        // If already bookmarked, then unbookmark
+      if (isBookmarked) {
         await unbookmarkPostMutation(post._id).unwrap();
-        message.success('Removed from bookmarks');
+        message.success('Recipe removed from favorites');
       } else {
-        // If not bookmarked, then bookmark
         await bookmarkPostMutation(post._id).unwrap();
-        message.success('Added to bookmarks');
+        message.success('Recipe added to favorites');
+      }
+      if (handleBookmarkPost) {
+        handleBookmarkPost(post._id);
       }
     } catch (error) {
-      // Revert optimistic update on error
-      setOptimisticBookmarked(isCurrentlyBookmarked);
-      console.error('Failed to update bookmark status:', error);
-      message.error('Failed to update bookmark status');
+      setOptimisticBookmarked(!optimisticBookmarked);
+      console.error('Failed to bookmark/unbookmark:', error);
+      message.error('Failed to update favorites');
     }
   };
 
-  const showModal = () => {
-    setShowDelete(true);
-    setShowBookmark(true);
-    setIsModalVisible(true);
+  const toggleComments = () => {
+    setShowComments(!showComments);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
+  const formatIngredients = (ingredients: string[]) => {
+    if (!ingredients || !ingredients.length) return null;
+    
+    return (
+      <div className="recipe-ingredients">
+        <h3>Ingredients</h3>
+        <ul>
+          {ingredients.map((ingredient, idx) => (
+            <li key={idx}>{ingredient}</li>
+          ))}
+        </ul>
+      </div>
+    );
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const formatInstructions = (instructions: string) => {
+    if (!instructions) return null;
+    
+    try {
+      // Try to parse if instructions are JSON
+      const parsedInstructions = JSON.parse(instructions);
+      if (Array.isArray(parsedInstructions)) {
+        return (
+          <div className="recipe-instructions">
+            <h3>Instructions</h3>
+            <ol>
+              {parsedInstructions.map((step, idx) => (
+                <li key={idx}>{step}</li>
+              ))}
+            </ol>
+          </div>
+        );
+      }
+    } catch (e) {
+      // If not JSON, display as regular text
+      return (
+        <div className="recipe-instructions">
+          <h3>Instructions</h3>
+          <p>{instructions}</p>
+        </div>
+      );
+    }
   };
-  const UpvoteIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} width="25" height="20" viewBox="0 0 24 24">
-      <path d="M12 4l-8 8h6v12h4V12h6l-8-8z" />
-    </svg>
-  );
-  
-  // Downvote Icon
-  const DownvoteIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} width="25" height="20" viewBox="0 0 24 24">
-      <path d="M12 20l8-8h-6V0h-4v12H4l8 8z" />
-    </svg>
-  );
+
+  // Function to handle Enter key press in comment input
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleCreateComment();
+    }
+  };
+
+  // Process comments data to handle both direct array and nested response object
+  const comments = React.useMemo(() => {
+    if (!commentsResponse) return [];
+    
+    // If commentsResponse is an object with commentData property (from API response)
+    if (typeof commentsResponse === 'object' && 'commentData' in commentsResponse) {
+      return (commentsResponse as CommentResponse).commentData || [];
+    }
+    
+    // If commentsResponse is already an array
+    if (Array.isArray(commentsResponse)) {
+      return commentsResponse;
+    }
+    
+    return [];
+  }, [commentsResponse]);
+
   return (
     <div className="post-style-map">
-      <SmallDashOutlined
-        style={{ justifyContent: 'end' }}
-        onClick={showModal}
-      />
-      <Modal
-        title="Options"
-        visible={isModalVisible}  
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-        getContainer={false}
-      >
-        {showDelete && currentUser?._id === post.user._id && (
-          <p className="delete-post" onClick={handleDelete} >
-           <span style={{display:'inline-block'}}> <DeleteOutlined /></span> Delete Post
-          </p>  
-        )}
-       {showBookmark && (
-  <p className="bookmark-post" onClick={handleBookmark}>
-    <span style={{ display: 'inline-block' }}>
-      <BookOutlined style={{ color: currentUser?.bookmarkedPosts?.includes(post._id) || optimisticBookmarked ? '#f28123' : 'inherit' }} />
-    </span>
-    {currentUser?.bookmarkedPosts?.includes(post._id) || optimisticBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'}
-  </p>
-)}
-      </Modal>
-      <div className="post-attribute">
-      </div>
-      <div className="created-by">
-        <img
-          src={post.user.profilePic ? `${baseUrl}${post.user.profilePic.replace(/\\/g, '/')}` : initialProfile}
-          alt="Profile"
-          className="pfp-img"
-        />
-        <div className="pfp-detail">
-          <div>
-            <Link
-              to={`/dashboard/profile/${post.user._id}`}
-              className="userName-style"
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
+      <div className="pfp-detail">
+        <div className="created-by">
+          <Link to={`/dashboard/profile/${post.user._id}`}>
+            <Avatar 
+              src={post.user.profilePic ? `${baseUrl}${post.user.profilePic.replace(/\\/g, '/')}` : initialProfile}
+              alt={`${post.user.firstName} ${post.user.lastName}`}
+              size={50}
+              className="pfp-img"
+            />
+          </Link>
+          <div style={{ marginLeft: 10 }}>
+            <div className="userName-style">
               {post.user.firstName} {post.user.lastName}
-            </Link>
-            <p className="created-at">{getTimeAgo(post.createdAt)}</p>
+            </div>
+            <div className="created-at">
+              <ClockCircleOutlined style={{ marginRight: 5 }} />
+              {getTimeAgo(post.createdAt)}
+            </div>
           </div>
-          {currentUser?._id && post.user._id !== currentUser._id && (
-            followingIds.includes(post.user._id) ? (
-              <p className="follow" onClick={() => handleUnfollow(post.user._id)} style={{ color: '#568000' }}>
-                Followed
-              </p>
+        </div>
+
+        <div className="post-attribute">
+          {post.user._id !== currentUser?._id ? (
+            followingIds?.includes(post.user._id) ? (
+              <button className="follow" onClick={() => handleUnfollow(post.user._id)}>
+                Following
+              </button>
             ) : (
-              <p className="follow" onClick={() => handleFollow(post.user._id)} style={{ color: 'white' }}>
-                + Follow
-              </p>
+              <button className="follow" onClick={() => handleFollow(post.user._id)}>
+                Follow
+              </button>
             )
+          ) : (
+            <Tooltip title="More options">
+              <Button
+                type="text"
+                icon={<MoreOutlined />}
+                onClick={() => setShowDelete(!showDelete)}
+                style={{ border: 'none' }}
+              />
+            </Tooltip>
+          )}
+          {showDelete && post.user._id === currentUser?._id && (
+            <div style={{ position: 'absolute', right: 0, background: 'white', padding: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '4px', zIndex: 10 }}>
+              <div className="delete-post" onClick={handleDelete}>
+                <DeleteOutlined /> Delete
+              </div>
+            </div>
           )}
         </div>
       </div>
-      <div className="category-type">
-        <p>#{post.discussionCategory.discussionCategory}</p>
+
+      {post.discussionCategory && (
+        <Tag className="category-type">
+          {post.discussionCategory.discussionCategory}
+        </Tag>
+      )}
+
+      <h2 className="post-title">{post.title}</h2>
+
+      {post.recipeimg && (
+        <div className="postImg">
+          <img src={post.recipeimg} alt={post.title} />
+        </div>
+      )}
+
+      {formatIngredients(post.ingredients)}
+      {formatInstructions(post.instructions)}
+
+      <div className="comment-icon">
+        <div className="dashoutline-fields" onClick={handleUpvote}>
+          <div className={`vote ${hasLiked ? 'voted' : ''}`}>
+            {hasLiked ? <HeartFilled /> : <HeartOutlined />}
+          </div>
+          <p>{likesCount}</p>
+        </div>
+
+        <div className="dashoutline-fields" onClick={toggleComments}>
+          <CommentOutlined />
+          <p>{comments?.length || 0}</p>
+        </div>
+
+        <div className="dashoutline-fields" onClick={handleBookmark}>
+          <div className={optimisticBookmarked ? 'voted' : ''}>
+            {optimisticBookmarked ? <BookFilled /> : <BookOutlined />}
+          </div>
+          <p>Save</p>
+        </div>
       </div>
-      
-      <p className="post-title">{post.title}</p>
-      <p className="post-description">{post.instructions}</p>
-      <div className="postImg" style={{ height: post.recipeimg ? '300px' : 'auto' }}>
-        {post.recipeimg && (
-          <img src={`${baseUrl}${post.recipeimg.replace(/\\/g, '/')}`} alt="Recipe Image" />
-        )}
-      </div>
-      <div style={{ display: 'flex' }}>
-      <div style={{ padding: 10 }} className="vote">
-  <p onClick={handleUpvote}>
-    <UpvoteIcon className={hasLiked ? 'voted upvoted' : ''} />
-  </p>
-  <p>{likesCount}</p>
-</div>
-<div style={{ padding: 10 }} className="vote">
-  <p onClick={handleDownvote}>
-    <DownvoteIcon className={hasUnliked ? 'voted downvoted' : ''} />
-  </p>
-  <p>{unlikesCount}</p>
-</div>
-      </div>
-      
-      <div className="comment-icon" onClick={() => setIsExpanded(!isExpanded)}>
-        <p style={{cursor:'pointer'}}>
-         <img src={CommentsIcon} alt="comment icon" /> {comments ? comments.commentData.length : 0} 
-        </p>
-      </div>
-      {isExpanded && (
-        <div className="comments-section">
+
+      {showComments && (
+        <div className="comments-container">
           {commentsLoading ? (
-            <p>Loading comments...</p>
+            <div className="comments-loading">
+              <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+              <p>Loading comments...</p>
+            </div>
           ) : commentsError ? (
-            <p>Error loading comments</p>
-          ) : (
-            <>
-              <div className="add-comment">
-                <img
-                  src={currentUser?.profilePic ? `${baseUrl}${currentUser.profilePic.replace(/\\/g, '/')}` : initialProfile}
-                  alt="Profile"
-                  className="comment-img"
-                />
-                <CommentForm
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Add a comment"
-                />
-                <button onClick={handleCreateComment} className="submit-comment-btn">
-                  add reply
-                </button>
-              </div>
-              {comments && comments.commentData.length > 0 ? (
-                comments.commentData.map((comment: Comment) => (
-                  <div key={comment._id} className="comment">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                      <div style={{ display: 'flex' }}>
-                        <img
-                          src={comment.author?.profilePic ? `${baseUrl}${comment.author?.profilePic.replace(/\\/g, '/')}` : initialProfile}
-                          alt="Profile"
-                          className="comment-img"
-                        />
-                        <div className="comment-content">
-                          <p style={{ alignItems: 'center', display: 'flex' }} className="comment-name">
-                            {comment.author.firstName} {comment.author.lastName}
-                          </p>
-                          <p style={{ color: '#3D4651' }}>{comment.content}</p>
-                        </div>
+            <div className="comments-error">
+              <WarningOutlined style={{ fontSize: 24, color: '#ff4d4f' }} />
+              <p>Error loading comments. <Button type="link" onClick={refetchComments}>Try again</Button></p>
+            </div>
+          ) : comments && comments.length > 0 ? (
+            <div className="comments-section">
+              {comments.map((comment: Comment) => (
+                <div key={comment._id} className="comment-item">
+                  <Avatar
+                    src={comment.author.profilePic ? `${baseUrl}${comment.author.profilePic.replace(/\\/g, '/')}` : initialProfile}
+                    alt={`${comment.author.firstName} ${comment.author.lastName}`}
+                    size={32}
+                    className="comment-img"
+                  />
+                  <div className="comment-details">
+                    <div style={{ flex: 1 }}>
+                      <div className="comment-name">
+                        {comment.author.firstName} {comment.author.lastName}
                       </div>
-                      {currentUser?._id === comment.author._id && (
-                        <div 
-                          className="delete-comment-icon" 
-                          onClick={() => handleDeleteComment(comment._id)}
-                          style={{ cursor: 'pointer', padding: '5px' }}
-                        >
-                          <DeleteOutlined style={{ color: '#ff4d4f' }} />
-                        </div>
-                      )}
+                      <div className="comment-text">{comment.content}</div>
+                      <div className="comment-time">{getTimeAgo(comment.createdAt)}</div>
                     </div>
+                    {comment.author._id === currentUser?._id && (
+                      <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDeleteComment(comment._id)}
+                      />
+                    )}
                   </div>
-                ))
-              ) : (
-                <p>No comments yet</p>
-              )}
-            </>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No comments yet. Be the first to comment!</p>
           )}
+          <Divider />
+          <div className="add-comment">
+            <Input.TextArea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Add a comment..."
+              autoSize={{ minRows: 2, maxRows: 6 }}
+            />
+            <Button
+              type="primary"
+              onClick={handleCreateComment}
+              style={{ marginTop: 10, backgroundColor: '#e67e22', borderColor: '#e67e22', width: '100%', maxWidth: '150px' }}
+            >
+              Post Comment
+            </Button>
+          </div>
         </div>
       )}
     </div>

@@ -1,36 +1,70 @@
-.custom-inp{
-   
-    margin-bottom:5%;
-   
+.custom-inp {
+    margin-bottom: 1.25rem;
+    position: relative;
 }
-.ant-inp{
-    background-color: #E3E3E3;
+
+.ant-inp {
+    background-color: #f9f9f9;
     height: 50px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 0 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
 }
+
+.ant-inp:focus {
+    background-color: #fff;
+    border-color: #e67e22;
+    box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.2);
+}
+
+.ant-inp:hover {
+    border-color: #e67e22;
+}
+
 .ant-input::placeholder {
-    color:black; 
-   font-family: 'Roboto', sans-serif;
-    font-size: 24px; 
-    line-height: 22px;
+    color: #999;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
     font-weight: 500;
-    letter-spacing: 0%;
-  }
-  @media only screen and (max-width: 900px) {
+}
+
+.error-text {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+@media only screen and (max-width: 768px) {
+    .ant-inp {
+        height: 45px;
+        font-size: 0.95rem;
+    }
+    
     .ant-input::placeholder {
-        font-size: 18px; 
-      
-      }
-  }
-  @media only screen and (max-width: 600px) {
+        font-size: 0.9rem;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .ant-inp {
+        height: 40px;
+        font-size: 0.9rem;
+    }
+    
     .ant-input::placeholder {
-        font-size: 14px; 
-      
-      }
-  }
-  @media only screen and (max-width: 400px) {
-    .ant-input::placeholder {
-        font-size: 12px; 
-      
-      }
-  }
+        font-size: 0.85rem;
+    }
+}
   

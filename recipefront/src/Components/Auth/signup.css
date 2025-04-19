@@ -3,29 +3,101 @@
     display: flex;
     align-items: center;
     justify-content: center;
-   
+    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('https://source.unsplash.com/random/1920x1080/?baking');
+    background-size: cover;
+    background-position: center;
 }
-.inp-form-style{
-    width:40%;
-    
-}
-.login-link{
-    display: flex;
-    margin-top: 15px;
-    }
-    .login-link a{
-        margin-left: 5px;
-    }
-.auth-image-div{
-    position: absolute;
-  
-   width: 279px;
 
-   max-width: 100%; 
-    height: auto; 
+.inp-form-style {
+    width: 450px;
+    max-width: 90%;
+    padding: 2.5rem;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
-.auth-image-div img{
+
+.login-link {
+    display: flex;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    justify-content: center;
+}
+
+.login-link a {
+    margin-left: 5px;
+    color: #e67e22;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.login-link a:hover {
+    color: #d35400;
+    text-decoration: underline;
+}
+
+.auth-title {
+    color: #333;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.auth-subtitle {
+    color: #666;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e67e22;
+}
+
+.error-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+    text-align: center;
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.auth-image-div {
+    position: absolute;
+    width: 279px;
+    max-width: 100%;
+    height: auto;
+    display: none;
+}
+
+.auth-image-div img {
     width: 100%;
     height: auto;
+}
+
+@media only screen and (max-width: 768px) {
+    .inp-form-style {
+        padding: 2rem 1.5rem;
+    }
+    
+    .auth-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .inp-form-style {
+        padding: 1.5rem 1rem;
+    }
 }
 

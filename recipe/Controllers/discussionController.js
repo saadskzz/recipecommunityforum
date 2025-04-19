@@ -48,7 +48,7 @@ const deleteDiscussionById = async (req, res) => {
     }
 };
 
-const initializeDiscussionCategories = async (req, res) => {
+const initializeDiscussionCategories = async () => {
     console.log('Initializing discussion categories...');
     const categories = ["General", "Cooking", "Diet", "Nutrition", "Recipe"];
     try {
@@ -68,15 +68,8 @@ const initializeDiscussionCategories = async (req, res) => {
 
         console.log('Inserted discussions:', discussions);
 
-        res.status(201).json({
-            message: "Categories initialized successfully",
-            discussions
-        });
     } catch (error) {
         console.error('Error initializing categories:', error.message);
-        res.status(500).json({
-            message: error.message
-        });
     }
 };
 

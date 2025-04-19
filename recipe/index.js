@@ -35,6 +35,10 @@ app.get('/initialize-discussions', async (req, res) => {
     console.log('Endpoint /initialize-discussions called');
     await initializeDiscussionCategories(req, res);
 });
+const initiateCategories = async ()=>{
+    await initializeDiscussionCategories();
+}
+initiateCategories();
 app.listen(port, () => {
     console.log(`connected to server at port ${port}`);
 });

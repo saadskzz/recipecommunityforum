@@ -61,7 +61,7 @@ const deleteSelfPost = async (req, res) => {
 };
 const getAllPosts = async(req,res)=>{
   try{
-  const postData = await Post.find().populate('user').populate('discussionCategory')
+  const postData = await Post.find().populate('user').populate('discussionCategory').sort({ createdAt: -1 })
   if(!postData){
    return res.status(404).json({
       status:"fail",

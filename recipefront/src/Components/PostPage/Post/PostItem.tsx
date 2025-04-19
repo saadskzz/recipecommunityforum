@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLikePostMutation, useUnlikePostMutation } from '../../../Slices/postSlice';
-import { useGetPostCommentsQuery, useCreateCommentMutation } from '../../../Slices/commentSlice';
+import { useGetPostCommentsQuery, useCreateCommentMutation, useDeleteCommentMutation } from '../../../Slices/commentSlice';
 import { useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
 import './getpost.css';
 import CommentsIcon from '../../../../message.svg'
@@ -107,6 +107,7 @@ const [optimisticBookmarked, setOptimisticBookmarked] = useState(
     currentUser?.bookmarkedPosts?.includes(post._id) || false
   );
   const { data: comments, isLoading: commentsLoading, isError: commentsError } = useGetPostCommentsQuery(post._id);
+  const [deleteComment] = useDeleteCommentMutation();
 
 const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
   const [createComment] = useCreateCommentMutation();
@@ -178,6 +179,16 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
       } catch (error) {
         console.error('Failed to create comment:', error);
       }
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await deleteComment(commentId).unwrap();
+      message.success('Comment deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      message.error('Failed to delete comment');
     }
   };
 
@@ -358,18 +369,29 @@ const isBookmarked = currentUser?.bookmarkedPosts?.includes(post._id);
               {comments && comments.commentData.length > 0 ? (
                 comments.commentData.map((comment: Comment) => (
                   <div key={comment._id} className="comment">
-                    <div style={{ display: 'flex' }}>
-                      <img
-                        src={comment.author.profilePic ? `${baseUrl}${comment.author.profilePic.replace(/\\/g, '/')}` : initialProfile}
-                        alt="Profile"
-                        className="comment-img"
-                      />
-                      <div className="comment-content">
-                        <p style={{ alignItems: 'center', display: 'flex' }} className="comment-name">
-                          {comment.author.firstName} {comment.author.lastName}
-                        </p>
-                        <p style={{ color: '#3D4651' }}>{comment.content}</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                      <div style={{ display: 'flex' }}>
+                        <img
+                          src={comment.author?.profilePic ? `${baseUrl}${comment.author?.profilePic.replace(/\\/g, '/')}` : initialProfile}
+                          alt="Profile"
+                          className="comment-img"
+                        />
+                        <div className="comment-content">
+                          <p style={{ alignItems: 'center', display: 'flex' }} className="comment-name">
+                            {comment.author.firstName} {comment.author.lastName}
+                          </p>
+                          <p style={{ color: '#3D4651' }}>{comment.content}</p>
+                        </div>
                       </div>
+                      {currentUser?._id === comment.author._id && (
+                        <div 
+                          className="delete-comment-icon" 
+                          onClick={() => handleDeleteComment(comment._id)}
+                          style={{ cursor: 'pointer', padding: '5px' }}
+                        >
+                          <DeleteOutlined style={{ color: '#ff4d4f' }} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))

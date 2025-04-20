@@ -13,10 +13,7 @@ function Sidebar() {
 
   const navItems = [
     { name: 'Home', icon: <FiHome size={20} />, path: '/dashboard/home' },
-    { name: 'Discover Recipes', icon: <MdOutlineFoodBank size={20} />, path: '/dashboard/forum/allposts' },
     { name: 'My Cookbook', icon: <FiBook size={20} />, path: '/dashboard/userrecipes' },
-    { name: 'Favorites', icon: <FiHeart size={20} />, path: '/dashboard/forum/bookmarkposts' },
-    { name: 'Following', icon: <FiUsers size={20} />, path: '/dashboard/forum/followed' },
     { name: 'Community', icon: <FiMessageCircle size={20} />, path: '/dashboard/forum' },
     { name: 'Profile', icon: <FiUser size={20} />, path: '/dashboard/profile' },
   ]

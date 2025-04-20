@@ -32,10 +32,6 @@ function App() {
           <Route path='airesponse/:id' element={<Airesponse/>}/>
           <Route path='userrecipes' element={<UserRecipes/>}/>
           <Route path='forum' element={<ForumPage />} >
-          <Route path='allposts' element={<GetPosts/>}/>
-          <Route path='followed' element={<FollowedPost/>}/>
-          <Route path='bookmarkposts' element={<BookmarkedPosts/>}/>
-          <Route path="category/:categoryId" element={<PostByCategory />} />
           
           </Route>
           <Route path='settings' element={<Settings/>}/>

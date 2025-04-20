@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { message } from 'antd';
-import { useShowBookmarkPostQuery } from '../../../Slices/authSlice'; // Correct import
-import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation,useUnfollowUserMutation } from '../../../Slices/authSlice';
-import { useUpvotePostMutation, useDownvotePostMutation } from '../../../Slices/postSlice';
+import { useShowBookmarkPostQuery, useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
+import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
 import './getpost.css';
 import PostItem from './PostItem';
 import noPost from '../../../../noPost.jpg'
@@ -10,7 +9,7 @@ import noPost from '../../../../noPost.jpg'
 interface Post {
   _id: string;
   title: string;
-  ingredients: string[];
+  ingredients: [string];
   instructions: string;
   recipeimg: string;
   user: {
@@ -30,10 +29,8 @@ interface Post {
 }
 
 function BookmarkedPosts() {
-
-  // Use the correct query from authSlice
-  const { data: bookmarkedData, error, isLoading } = useShowBookmarkPostQuery();
-  const bookmarkedPosts = bookmarkedData?.user?.bookmarkedPosts.map((post: Post) => ({
+  const { data: bookmarkedData, error, isLoading, refetch } = useShowBookmarkPostQuery(undefined);
+  const bookmarkedPosts = bookmarkedData?.user?.bookmarkedPosts.map((post: any) => ({
     ...post,
     user: {
       ...post.user,
@@ -48,9 +45,22 @@ function BookmarkedPosts() {
 
   const { data: currentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;
+  // Get bookmarked posts IDs for easy lookup
+  const [bookmarkedPostIds, setBookmarkedPostIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (bookmarkedData?.user?.bookmarkedPosts) {
+      // Extract post IDs from bookmarked posts
+      const postIds = bookmarkedData.user.bookmarkedPosts.map((post: any) => post._id);
+      setBookmarkedPostIds(postIds);
+    }
+  }, [bookmarkedData]);
 
   const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });
   const [followingIds, setFollowingIds] = useState<string[]>([]);
+
+  const [bookmarkPost] = useBookmarkPostMutation();
+  const [unbookmarkPost] = useUnBookmarkPostMutation();
 
   useEffect(() => {
     if (followingData) {
@@ -60,8 +70,6 @@ function BookmarkedPosts() {
 
   const [followUser] = useFollowUserMutation();
   const [unfollowUser] = useUnfollowUserMutation();
-  const [upvotePost] = useUpvotePostMutation();
-  const [downvotePost] = useDownvotePostMutation();
 
   const handleFollow = async (userIdToFollow: string) => {
     const previousFollowingIds = [...followingIds];
@@ -88,58 +96,71 @@ function BookmarkedPosts() {
       message.error('Failed to unfollow user. Please try again.');
     }
   };
+  
   const handleDeletePost = async (postId: string) => {
     console.log('Delete post:', postId);
   };
 
-  const handleBookmarkPost = (postId: string) => {
-    console.log('Add to bookmarks:', postId);
-  };
-
-  const handleUpvote = async (postId: string) => {
+  const handleBookmarkPost = async (postId: string) => {
     try {
-      await upvotePost(postId).unwrap();
+      // In BookmarkedPosts component, all posts are already bookmarked,
+      // so we should only handle unbookmarking
+      await unbookmarkPost(postId).unwrap();
+      message.success('Recipe removed from favorites');
+      
+      // Optimistically update the bookmarked posts list
+      setBookmarkedPostIds(prevIds => prevIds.filter(id => id !== postId));
+      
+      // Refresh the bookmarked posts list
+      refetch();
     } catch (error) {
-      console.error('Failed to upvote post:', error);
+      console.error('Failed to update bookmark:', error);
+      message.error('Failed to update favorites');
     }
   };
 
-  const handleDownvote = async (postId: string) => {
-    try {
-      await downvotePost(postId).unwrap();
-    } catch (error) {
-      console.error('Failed to downvote post:', error);
-    }
-  };
-
-  return (<div>
-    <div className="post-style">
-      {isLoading && <p>Loading...</p>}
-      {error && <p>There are no bookmarks you have made as of now</p>}
-      <h1>Bookmarked Posts</h1>
+  return (
+    <div>
+      {isLoading && (
+        <div className="loader-container">
+          <div className="loader"></div>
+        </div>
+      )}
+      
+      {error && (
+        <div className='error-content'> 
+          <div className='no-post-style'>
+            <img src={noPost} alt="no post" />
+          </div>
+          <p>There are no bookmarks you have made as of now</p>
+        </div>
+      )}
+      
       {bookmarkedPosts.length > 0 ? (
-        bookmarkedPosts.map((post: Post) => (
-          <div>
-
-          <PostItem
-            key={post._id}
-            post={post}
-            currentUser={currentUser?.data}
-            followingIds={followingIds}
-            handleFollow={handleFollow}
-            handleUnfollow={handleUnfollow}
-            handleDeletePost={handleDeletePost}
-            handleBookmarkPost={handleBookmarkPost}
-            handleUpvote={handleUpvote} // Pass handleUpvote
-            handleDownvote={handleDownvote} // Pass handleDownvote
-          />
+        bookmarkedPosts.map((post: any) => (
+          <div key={post._id}>
+            <PostItem
+              post={post}
+              currentUser={{
+                ...currentUser?.data,
+                bookmarkedPosts: bookmarkedPostIds
+              }}
+              followingIds={followingIds}
+              handleFollow={handleFollow}
+              handleUnfollow={handleUnfollow}
+              handleDeletePost={handleDeletePost}
+              handleBookmarkPost={handleBookmarkPost}
+            />
           </div>
         ))
       ) : (
-        <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
-      <p>No post Bookmarked</p> </div>
+        <div className='error-content'> 
+          <div className='no-post-style'>
+            <img src={noPost} alt="no post" />
+          </div>
+          <p>No post Bookmarked</p> 
+        </div>
       )}
-    </div>
     </div>
   );
 }

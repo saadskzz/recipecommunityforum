@@ -4,18 +4,24 @@ import Post from '../Models/PostModel.js';
 const createComment = async(req, res) => {
     const author = req.user._id;
     const postid = req.params.postid;
-    const { content } = req.body;
+    const { content, parentId } = req.body;
     
     const createdComment = new Comment({
         author,
         content,
-        post: postid 
+        post: postid,
+        parentId: parentId || null
     });
 
     try {
         await createdComment.save();
+        
+        // Populate author data before sending the response
+        const populatedComment = await Comment.findById(createdComment._id)
+            .populate('author', 'firstName lastName profilePic');
+        
         res.status(200).json({
-            createdComment
+            createdComment: populatedComment
         });
     } catch (error) {
         res.status(400).json({
@@ -28,7 +34,10 @@ const getPostComments = async(req, res) => {
     const postid = req.params.postid;
     try {
         if (postid) {
-            const commentData = await Comment.find({ post: postid }).populate('author', 'firstName lastName profilePic');
+            const commentData = await Comment.find({ post: postid })
+                .populate('author', 'firstName lastName profilePic')
+                .sort({ createdAt: 1 }); // Sort by creation date
+            
             return res.status(200).json({
                 status: 'success',
                 commentData
@@ -65,11 +74,17 @@ const deleteComment = async(req, res) => {
             });
         }
         
-        await Comment.findByIdAndDelete(commentid);
+        // Delete this comment and all its replies
+        await Comment.deleteMany({ 
+            $or: [
+                { _id: commentid },
+                { parentId: commentid }
+            ]
+        });
         
         return res.status(200).json({
             status: 'success',
-            message: 'Comment deleted successfully'
+            message: 'Comment and all replies deleted successfully'
         });
     } catch (error) {
         return res.status(400).json({

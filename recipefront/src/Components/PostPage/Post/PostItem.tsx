@@ -4,7 +4,7 @@ import { useLikePostMutation, useUnlikePostMutation } from '../../../Slices/post
 import { useGetPostCommentsQuery, useCreateCommentMutation, useDeleteCommentMutation } from '../../../Slices/commentSlice';
 import { useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
 import './getpost.css';
-import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined, ClockCircleOutlined, TeamOutlined, HeartOutlined, HeartFilled, BookFilled, MoreOutlined, LoadingOutlined, WarningOutlined } from '@ant-design/icons';
+import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined, ClockCircleOutlined, TeamOutlined, HeartOutlined, HeartFilled, BookFilled, MoreOutlined, LoadingOutlined, WarningOutlined, SendOutlined, RollbackOutlined } from '@ant-design/icons';
 import PostForm from './PostForm';
 import initialProfile from '../../../../initialprofile.jpg';
 import { message, Modal, Input, Avatar, Tooltip, Divider, Tag, Button, Spin } from 'antd';
@@ -66,6 +66,8 @@ interface Comment {
   post: string;
   createdAt: string;
   __v: number;
+  parentId?: string;
+  replies?: Comment[];
 }
 
 interface CommentResponse {
@@ -73,17 +75,175 @@ interface CommentResponse {
   commentData: Comment[];
 }
 
-// Create a simplified comment form component that wraps PostForm
-const CommentForm = ({ value, onChange, placeholder }: { value: string; onChange: (e: any) => void; placeholder: string }) => {
+// Create a simplified comment form component
+const CommentForm = ({ value, onChange, placeholder, onSubmit, isReply = false }: 
+  { value: string; onChange: (e: any) => void; placeholder: string; onSubmit: () => void; isReply?: boolean }) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && isReply) {
+      e.preventDefault();
+      onSubmit();
+    }
+  };
+
   return (
-    <div className='custom-inp'>
-      <Input 
-        size="large" 
-        placeholder={placeholder} 
-        value={value} 
-        onChange={onChange} 
-        className='ant-inp' 
+    <div className={`custom-inp ${isReply ? 'reply-input' : ''}`}>
+      {isReply ? (
+        <Input
+          size="large"
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onKeyPress={handleKeyPress}
+          className='ant-inp'
+          suffix={
+            <Button 
+              type="text" 
+              icon={<SendOutlined />} 
+              onClick={onSubmit}
+              style={{ color: value.trim() ? '#e67e22' : '#ccc' }}
+              disabled={!value.trim()}
+            />
+          }
+        />
+      ) : (
+        <Input.TextArea
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className='ant-inp'
+          autoSize={{ minRows: 2, maxRows: 6 }}
+        />
+      )}
+    </div>
+  );
+};
+
+// Comment item component
+const CommentItem = ({ 
+  comment, 
+  currentUser, 
+  baseUrl, 
+  handleDeleteComment, 
+  getTimeAgo, 
+  handleCreateReply,
+}: {
+  comment: Comment;
+  currentUser: User | undefined;
+  baseUrl: string;
+  handleDeleteComment: (commentId: string) => Promise<void>;
+  getTimeAgo: (dateString: string) => string;
+  handleCreateReply: (commentId: string, content: string) => Promise<void>;
+}) => {
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [replyContent, setReplyContent] = useState('');
+  const [showReplies, setShowReplies] = useState(false);
+
+  const handleReplySubmit = async () => {
+    if (replyContent.trim()) {
+      await handleCreateReply(comment._id, replyContent);
+      setReplyContent('');
+      setShowReplyInput(false);
+      setShowReplies(true); // Show replies after submitting a new one
+    }
+  };
+
+  // Check if the comment has replies
+  const hasReplies = comment.replies && comment.replies.length > 0;
+
+  return (
+    <div className="comment-item">
+      <Avatar
+        src={comment.author.profilePic ? `${baseUrl}${comment.author.profilePic.replace(/\\/g, '/')}` : initialProfile}
+        alt={`${comment.author.firstName} ${comment.author.lastName}`}
+        size={32}
+        className="comment-img"
       />
+      <div className="comment-details">
+        <div style={{ flex: 1 }}>
+          <div className="comment-name">
+            {comment.author.firstName} {comment.author.lastName}
+          </div>
+          <div className="comment-text">{comment.content}</div>
+          <div className="comment-time">{getTimeAgo(comment.createdAt)}</div>
+          
+          <div className="comment-actions">
+            <Button 
+              type="text" 
+              size="small" 
+              onClick={() => setShowReplyInput(!showReplyInput)}
+              className="reply-button"
+            >
+              Reply
+            </Button>
+            
+            {hasReplies && (
+              <Button 
+                type="text" 
+                size="small" 
+                onClick={() => setShowReplies(!showReplies)}
+                className="view-replies-button"
+                icon={showReplies ? null : <RollbackOutlined rotate={180} />}
+              >
+                {showReplies ? 'Hide replies' : `View ${comment.replies?.length} ${comment.replies?.length === 1 ? 'reply' : 'replies'}`}
+              </Button>
+            )}
+          </div>
+          
+          {showReplyInput && (
+            <div className="reply-input-container">
+              <CommentForm
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                placeholder="Write a reply..."
+                onSubmit={handleReplySubmit}
+                isReply={true}
+              />
+            </div>
+          )}
+          
+          {showReplies && hasReplies && (
+            <div className="replies-container">
+              {comment.replies?.map((reply) => (
+                <div key={reply._id} className="reply-item">
+                  <Avatar
+                    src={reply.author.profilePic ? `${baseUrl}${reply.author.profilePic.replace(/\\/g, '/')}` : initialProfile}
+                    alt={`${reply.author.firstName} ${reply.author.lastName}`}
+                    size={24}
+                    className="reply-img"
+                  />
+                  <div className="reply-details">
+                    <div style={{ flex: 1 }}>
+                      <div className="reply-name">
+                        {reply.author.firstName} {reply.author.lastName}
+                      </div>
+                      <div className="reply-text">{reply.content}</div>
+                      <div className="reply-time">{getTimeAgo(reply.createdAt)}</div>
+                    </div>
+                    {reply.author._id === currentUser?._id && (
+                      <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDeleteComment(reply._id)}
+                        size="small"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {comment.author._id === currentUser?._id && (
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteComment(comment._id)}
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -109,6 +269,12 @@ const PostItem: React.FC<PostItemProps> = ({
   const [optimisticBookmarked, setOptimisticBookmarked] = useState(
     currentUser?.bookmarkedPosts?.includes(post._id) || false
   );
+  
+  // Update optimisticBookmarked when currentUser or post changes
+  useEffect(() => {
+    setOptimisticBookmarked(currentUser?.bookmarkedPosts?.includes(post._id) || false);
+  }, [currentUser, post._id]);
+  
   const { data: commentsResponse, isLoading: commentsLoading, isError: commentsError, refetch: refetchComments } = useGetPostCommentsQuery(post._id);
   const [deleteComment] = useDeleteCommentMutation();
 
@@ -214,7 +380,9 @@ const PostItem: React.FC<PostItemProps> = ({
   };
 
   const handleBookmark = async () => {
+    // Optimistically update UI state
     setOptimisticBookmarked(!optimisticBookmarked);
+    
     try {
       if (isBookmarked) {
         await unbookmarkPostMutation(post._id).unwrap();
@@ -223,10 +391,13 @@ const PostItem: React.FC<PostItemProps> = ({
         await bookmarkPostMutation(post._id).unwrap();
         message.success('Recipe added to favorites');
       }
+      
+      // Call the parent component's handleBookmarkPost function for additional handling
       if (handleBookmarkPost) {
         handleBookmarkPost(post._id);
       }
     } catch (error) {
+      // Revert optimistic update if there's an error
       setOptimisticBookmarked(!optimisticBookmarked);
       console.error('Failed to bookmark/unbookmark:', error);
       message.error('Failed to update favorites');
@@ -289,13 +460,59 @@ const PostItem: React.FC<PostItemProps> = ({
     }
   };
 
-  // Process comments data to handle both direct array and nested response object
-  const comments = React.useMemo(() => {
+  // Function to create a reply to a comment
+  const handleCreateReply = async (parentId: string, content: string) => {
+    if (!content.trim()) return;
+    
+    try {
+      // Assuming your createComment API accepts a parentId parameter for replies
+      await createComment({
+        postId: post._id,
+        content,
+        parentId
+      }).unwrap();
+      
+      message.success('Reply added');
+      refetchComments();
+    } catch (error) {
+      console.error('Failed to add reply:', error);
+      message.error('Failed to add reply');
+    }
+  };
+
+  // Process comments data to organize into a tree structure with replies
+  const organizedComments = React.useMemo(() => {
     if (!commentsResponse) return [];
     
     // If commentsResponse is an object with commentData property (from API response)
     if (typeof commentsResponse === 'object' && 'commentData' in commentsResponse) {
-      return (commentsResponse as CommentResponse).commentData || [];
+      const comments = (commentsResponse as CommentResponse).commentData || [];
+      const commentMap = new Map();
+      const result: Comment[] = [];
+      
+      // First pass: add all comments to the map
+      comments.forEach(comment => {
+        const commentWithReplies = { ...comment, replies: [] };
+        commentMap.set(comment._id, commentWithReplies);
+      });
+      
+      // Second pass: organize into parent/child structure
+      comments.forEach(comment => {
+        if (comment.parentId && commentMap.has(comment.parentId)) {
+          // This is a reply, add it to parent's replies array
+          const parent = commentMap.get(comment.parentId);
+          if (parent.replies) {
+            parent.replies.push(commentMap.get(comment._id));
+          } else {
+            parent.replies = [commentMap.get(comment._id)];
+          }
+        } else {
+          // This is a top-level comment
+          result.push(commentMap.get(comment._id));
+        }
+      });
+      
+      return result;
     }
     
     // If commentsResponse is already an array
@@ -387,7 +604,7 @@ const PostItem: React.FC<PostItemProps> = ({
 
         <div className="dashoutline-fields" onClick={toggleComments}>
           <CommentOutlined />
-          <p>{comments?.length || 0}</p>
+          <p>{organizedComments?.length || 0}</p>
         </div>
 
         <div className="dashoutline-fields" onClick={handleBookmark}>
@@ -410,34 +627,18 @@ const PostItem: React.FC<PostItemProps> = ({
               <WarningOutlined style={{ fontSize: 24, color: '#ff4d4f' }} />
               <p>Error loading comments. <Button type="link" onClick={refetchComments}>Try again</Button></p>
             </div>
-          ) : comments && comments.length > 0 ? (
+          ) : organizedComments && organizedComments.length > 0 ? (
             <div className="comments-section">
-              {comments.map((comment: Comment) => (
-                <div key={comment._id} className="comment-item">
-                  <Avatar
-                    src={comment.author.profilePic ? `${baseUrl}${comment.author.profilePic.replace(/\\/g, '/')}` : initialProfile}
-                    alt={`${comment.author.firstName} ${comment.author.lastName}`}
-                    size={32}
-                    className="comment-img"
-                  />
-                  <div className="comment-details">
-                    <div style={{ flex: 1 }}>
-                      <div className="comment-name">
-                        {comment.author.firstName} {comment.author.lastName}
-                      </div>
-                      <div className="comment-text">{comment.content}</div>
-                      <div className="comment-time">{getTimeAgo(comment.createdAt)}</div>
-                    </div>
-                    {comment.author._id === currentUser?._id && (
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDeleteComment(comment._id)}
-                      />
-                    )}
-                  </div>
-                </div>
+              {organizedComments.map((comment: Comment) => (
+                <CommentItem 
+                  key={comment._id}
+                  comment={comment}
+                  currentUser={currentUser}
+                  baseUrl={baseUrl}
+                  handleDeleteComment={handleDeleteComment}
+                  getTimeAgo={getTimeAgo}
+                  handleCreateReply={handleCreateReply}
+                />
               ))}
             </div>
           ) : (
@@ -445,12 +646,11 @@ const PostItem: React.FC<PostItemProps> = ({
           )}
           <Divider />
           <div className="add-comment">
-            <Input.TextArea
+            <CommentForm
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              onKeyPress={handleKeyPress}
               placeholder="Add a comment..."
-              autoSize={{ minRows: 2, maxRows: 6 }}
+              onSubmit={handleCreateComment}
             />
             <Button
               type="primary"

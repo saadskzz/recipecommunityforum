@@ -1,5 +1,5 @@
 .profile-container {
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -120,6 +120,9 @@
 }
 
 .profile-tabs {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   margin-bottom: 2rem;
 }
 
@@ -131,16 +134,43 @@
   background-color: #e67e22;
 }
 
+.tab-content-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.recipe-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recipe-list > div {
+  width: 100%;
+}
+
+.ant-tabs-content {
+  width: 100%;
+}
+
+.ant-tabs-tabpane {
+  width: 100%;
+}
+
 .empty-recipes-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 40px 20px;
   text-align: center;
-  background-color: #f9f5f1;
+  background: #f9f9f9;
   border-radius: 8px;
-  margin-top: 1rem;
+  width: 100%;
+  margin: 20px auto;
 }
 
 .empty-recipes-container h4 {
@@ -196,5 +226,33 @@
   
   .profile-stats {
     justify-content: center;
+  }
+}
+
+/* Add this to ensure consistent PostItem styling */
+.recipe-list .post-container {
+  width: 100%;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Makes sure images in posts have consistent sizing */
+.recipe-list .post-image-container img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  max-height: 300px;
+}
+
+/* Ensure mobile responsiveness */
+@media (max-width: 768px) {
+  .tab-content-container {
+    padding: 10px;
+  }
+  
+  .profile-tabs {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 }

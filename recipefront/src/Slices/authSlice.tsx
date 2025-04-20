@@ -96,7 +96,7 @@ export const authApi = createApi({
             query: (postId) => ({
                 url: '/unbookmarkpost',
                 method: 'PATCH',
-                body: { postId }
+                body: { bookmarkedPosts: postId }
             }),
             invalidatesTags: ['Bookmark','User'],
         }),

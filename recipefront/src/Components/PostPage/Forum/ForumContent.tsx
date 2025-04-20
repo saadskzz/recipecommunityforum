@@ -1,48 +1,69 @@
 import CreatePost from "../Post/CreatePost"
-import {ThunderboltFilled,UserOutlined,BookFilled,BookOutlined} from '@ant-design/icons'
+import {ThunderboltFilled, UserOutlined, BookOutlined, AppstoreOutlined} from '@ant-design/icons'
 import './forumContent.css'
 import CategoryCard from "../DiscussionCategory/CategoryCard"
-
-import { Link, Outlet } from "react-router-dom"
 import { useState } from "react"
+import GetPosts from "../Post/GetPosts"
+import FollowedPost from "../Post/FollowedPost"
+import BookmarkedPosts from "../Post/BookmarkedPosts"
 
 function ForumContent() {
     const [activeItem, setActiveItem] = useState<string>('allposts')
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-  const handleItemClick = (item: string) => {
-    setActiveItem(item)
-  }
+    const handleItemClick = (item: string) => {
+      setActiveItem(item)
+      // Reset category selection when switching tabs
+      setSelectedCategory(null)
+    }
+    
+    const handleCategorySelect = (categoryId: string) => {
+      setSelectedCategory(categoryId === selectedCategory ? null : categoryId)
+    }
+  
   return (
-    <div style={{display:'flex',width:'100%'}}>
-      <div className="forumContent-post">
-        <h1>Forum</h1>
-       
-       <CreatePost/>
-       
-        <Outlet />
-      </div>
-      <div style={{display:'flex',flexDirection:'column',margin:10}}>
-        <div className="content-select">
-          <Link to={'allposts'}>
-            <p onClick={() => handleItemClick('allposts')} 
-               style={{color: activeItem === 'allposts' ? "#773CBD" : "#142139"}}>
-              <ThunderboltFilled /> All Post
-            </p>
-          </Link>
-          <Link to={'followed'}>
-            <p onClick={() => handleItemClick('followed')}
-               style={{color: activeItem === 'followed' ? "#773CBD" : "#142139"}}>
-              <UserOutlined /> Followed
-            </p>
-          </Link>
-          <Link to={'bookmarkposts'}>
-            <p onClick={() => handleItemClick('bookmarkposts')}
-               style={{color: activeItem === 'bookmarkposts' ? "#773CBD" : "#142139"}}>
-              <BookOutlined /> Bookmarks
-            </p>
-          </Link>
+    <div className="forum-container">
+      <div className="forum-header-section">
+        <h1 className="forum-title">Recipe Community Forum</h1>
+        
+        <div className="tab-navigation">
+          <div 
+            className={`nav-tab ${activeItem === 'allposts' ? 'active-nav-tab' : ''}`}
+            onClick={() => handleItemClick('allposts')}>
+            <ThunderboltFilled /> All Posts
+          </div>
+          
+          <div 
+            className={`nav-tab ${activeItem === 'followed' ? 'active-nav-tab' : ''}`}
+            onClick={() => handleItemClick('followed')}>
+            <UserOutlined /> Followed
+          </div>
+          
+          <div 
+            className={`nav-tab ${activeItem === 'bookmarkposts' ? 'active-nav-tab' : ''}`}
+            onClick={() => handleItemClick('bookmarkposts')}>
+            <BookOutlined /> Bookmarks
+          </div>
         </div>
-        <CategoryCard />
+      </div>
+      
+      <div className="forum-content-wrapper">
+        <div className="categories-section">
+          <div className="category-header">
+            <AppstoreOutlined /> Categories
+          </div>
+          <CategoryCard onCategorySelect={handleCategorySelect} selectedCategory={selectedCategory} />
+        </div>
+        
+        <div className="main-content">
+          <CreatePost/>
+          
+          <div className="posts-container">
+            {activeItem === 'allposts' && <GetPosts categoryId={selectedCategory} />}
+            {activeItem === 'followed' && <FollowedPost />}
+            {activeItem === 'bookmarkposts' && <BookmarkedPosts />}
+          </div>
+        </div>
       </div>
     </div>
   )

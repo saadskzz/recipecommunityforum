@@ -1,5 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+export interface CommentData {
+  postId: string;
+  content: string;
+  parentId?: string;
+}
+
 export const commentsApi = createApi({
   reducerPath: 'commentsApi',
   baseQuery: fetchBaseQuery({
@@ -19,7 +25,7 @@ export const commentsApi = createApi({
       providesTags: ['Comments']
     }),
     createComment: builder.mutation({
-      query: (comment) => ({
+      query: (comment: CommentData) => ({
         url: `/${comment.postId}/createcomment`,
         method: 'POST',
         body: comment

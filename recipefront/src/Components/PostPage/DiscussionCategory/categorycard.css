@@ -1,38 +1,63 @@
 /* forumContent.css */
 .category-card {
+  padding: 15px;
   background-color: #fff;
-  padding: 20px;
- 
-  
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-   font-family:'Roboto', sans-serif;
-   margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  font-family:'Roboto', sans-serif;
+  margin-top: 20px;
 }
 
 .category-card h2 {
+  font-size: 1.2rem;
   margin-bottom: 15px;
-  color: #2c3e50;
+  color: #333;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.category-card h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #773CBD 0%, #a56eff 100%);
 }
 
 .categories-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .category-item {
   display: flex;
   align-items: center;
-  padding: 10px;
-  background-color: #f8f9fa;
+  gap: 10px;
+  padding: 10px 12px;
   border-radius: 6px;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: #f5f5f5;
 }
 
 .category-item:hover {
-  background-color: #e9ecef;
-  cursor: pointer;
+  background-color: #f2e9ff;
+  color: #773CBD;
+}
+
+.selected-category {
+  background: linear-gradient(90deg, #773CBD 0%, #a56eff 100%);
+  color: white;
+  font-weight: 500;
+}
+
+.selected-category:hover {
+  background: linear-gradient(90deg, #6930b0 0%, #9759f0 100%);
+  color: white;
 }
 
 .category-item span {

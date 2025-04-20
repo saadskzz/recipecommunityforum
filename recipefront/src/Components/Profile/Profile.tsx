@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Profile.css';
 import '../Home/recipe.css';
-import { useUploadProfilePicMutation, useUploadCoverPicMutation, useGetCurrentUserQuery, useUpdateBioMutation } from '../../Slices/authSlice';
+import { useUploadProfilePicMutation, useUploadCoverPicMutation, useGetCurrentUserQuery, useUpdateBioMutation, useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../Slices/authSlice';
 import { useGetPostsByUserIdQuery, useGetLikedPostsQuery } from '../../Slices/postSlice';
 import initialProfile from '../../../initialprofile.jpg';
 import initialCoverPic from '../../../initialbackgroundsmall.jpg';
@@ -29,6 +29,7 @@ interface User {
   email?: string;
   role?: string;
   verified?: boolean;
+  bookmarkedPosts?: string[];
 }
 
 interface UserResponse {
@@ -44,10 +45,31 @@ interface Recipe {
   image?: string;
   duration?: string;
   likes?: any[];
+  ingredients: [string];
+  instructions?: string;
+  recipeimg?: string;
+  user?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    profilePic?: string;
+  };
   author?: {
     firstName: string;
     lastName: string;
   };
+  createdAt?: string;
+  discussionCategory?: {
+    discussionCategory: string;
+  };
+  likesCount?: number;
+  unlikesCount?: number;
+  unlikes?: string[];
+}
+
+interface Following {
+  _id: string;
+  [key: string]: any;
 }
 
 const Profile = () => {
@@ -60,6 +82,9 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('recipes');
   const [bio, setBio] = useState<string>('');
   const [isEditingBio, setIsEditingBio] = useState(false);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([]);
+  const [bookmarkPost] = useBookmarkPostMutation();
+  const [unBookmarkPost] = useUnBookmarkPostMutation();
 
   const { data: user, isLoading, isError } = useGetCurrentUserQuery(undefined);
   const { data: posts, isLoading: postsLoading, isError: postsError } = useGetPostsByUserIdQuery(user?.data._id);
@@ -73,6 +98,7 @@ const Profile = () => {
   useEffect(() => {
     if (user?.data) {
       setBio(user.data.Bio || '');
+      setBookmarkedPosts(user.data.bookmarkedPosts || []);
     }
   }, [user]);
 
@@ -137,6 +163,37 @@ const Profile = () => {
     }
   };
 
+  const handleBookmarkPost = async (postId: string) => {
+    try {
+      // Toggle bookmark status
+      if (bookmarkedPosts.includes(postId)) {
+        await unBookmarkPost(postId).unwrap();
+        setBookmarkedPosts(bookmarkedPosts.filter(id => id !== postId));
+      } else {
+        await bookmarkPost(postId).unwrap();
+        setBookmarkedPosts([...bookmarkedPosts, postId]);
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+      message.error('Failed to update bookmark status');
+    }
+  };
+
+  const handleFollow = async (userId: string) => {
+    // Placeholder for follow functionality
+    console.log('Follow user:', userId);
+  };
+
+  const handleUnfollow = async (userId: string) => {
+    // Placeholder for unfollow functionality
+    console.log('Unfollow user:', userId);
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    // Placeholder for delete post functionality
+    console.log('Delete post:', postId);
+  };
+
   if (isLoading || postsLoading || likedPostsLoading) {
     return (
       <div className="profile-loading">
@@ -149,6 +206,7 @@ const Profile = () => {
   // Treat posts as recipes for this redesign
   const userRecipes = posts?.data || [];
   const savedRecipes = likedPosts?.data || [];
+  console.log(userRecipes);
 
   return (
     <div className="profile-container">
@@ -268,77 +326,59 @@ const Profile = () => {
             className="profile-tabs"
           >
             <TabPane tab="My Recipes" key="recipes">
-              {userRecipes.length > 0 ? (
-                <Row gutter={[24, 24]}>
-                  {userRecipes.map((recipe: Recipe) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={recipe._id}>
-                      <Card 
-                        hoverable
-                        cover={
-                          <div className="recipe-image-container">
-                            <img 
-                              alt={recipe.title} 
-                              src={recipe.image || noPost} 
-                              className="recipe-image"
-                            />
-                          </div>
-                        }
-                        className="recipe-card"
-                      >
-                        <Title level={4} className="recipe-title">{recipe.title}</Title>
-                        <div className="recipe-meta">
-                          <span><FiClock /> {recipe.duration || '30 mins'}</span>
-                          <span><FiHeart /> {recipe.likes?.length || 0}</span>
-                        </div>
-                        <Text className="recipe-description">{recipe.content?.substring(0, 60) || 'A delicious recipe...'}</Text>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              ) : (
-                <div className="empty-recipes-container">
-                  <MdOutlineFoodBank size={60} color="#e67e22" />
-                  <Title level={4}>You haven't created any recipes yet</Title>
-                  <Button type="primary" icon={<FiEdit2 />}>Create Your First Recipe</Button>
-                </div>
-              )}
+              <div className="tab-content-container">
+                {userRecipes.length > 0 ? (
+                  <div className="recipe-list">
+                    {userRecipes.map((recipe: Recipe) => (
+                      <PostItem 
+                        key={recipe._id}
+                        post={recipe as any}
+                        currentUser={user?.data}
+                        followingIds={user?.data.following?.map((f: Following) => f._id) || []}
+                        handleFollow={handleFollow}
+                        handleUnfollow={handleUnfollow}
+                        handleDeletePost={handleDeletePost}
+                        handleBookmarkPost={handleBookmarkPost}
+                        bookmarkedPosts={bookmarkedPosts}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-recipes-container">
+                    <MdOutlineFoodBank size={60} color="#e67e22" />
+                    <Title level={4}>You haven't created any recipes yet</Title>
+                    <Button type="primary" icon={<FiEdit2 />}>Create Your First Recipe</Button>
+                  </div>
+                )}
+              </div>
             </TabPane>
             
             <TabPane tab="Saved Recipes" key="saved">
-              {savedRecipes.length > 0 ? (
-                <Row gutter={[24, 24]}>
-                  {savedRecipes.map((recipe: Recipe) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={recipe._id}>
-                      <Card 
-                        hoverable
-                        cover={
-                          <div className="recipe-image-container">
-                            <img 
-                              alt={recipe.title} 
-                              src={recipe.image || noPost} 
-                              className="recipe-image"
-                            />
-                          </div>
-                        }
-                        className="recipe-card"
-                      >
-                        <Title level={4} className="recipe-title">{recipe.title}</Title>
-                        <div className="recipe-meta">
-                          <span><FiUser /> {recipe.author?.firstName || 'Unknown'}</span>
-                          <span><FiHeart /> {recipe.likes?.length || 0}</span>
-                        </div>
-                        <Text className="recipe-description">{recipe.content?.substring(0, 60) || 'A delicious recipe...'}</Text>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              ) : (
-                <div className="empty-recipes-container">
-                  <FiBookmark size={60} color="#e67e22" />
-                  <Title level={4}>You haven't saved any recipes yet</Title>
-                  <Button type="primary">Discover Recipes</Button>
-                </div>
-              )}
+              <div className="tab-content-container">
+                {savedRecipes.length > 0 ? (
+                  <div className="recipe-list">
+                    {savedRecipes.map((recipe: Recipe) => (
+                      <PostItem 
+                        key={recipe._id}
+                        post={recipe as any}
+                        currentUser={user?.data}
+                        followingIds={user?.data.following?.map((f: Following) => f._id) || []}
+                        handleFollow={handleFollow}
+                        handleUnfollow={handleUnfollow}
+                        handleDeletePost={handleDeletePost}
+                        handleBookmarkPost={handleBookmarkPost}
+                        bookmarkedPosts={bookmarkedPosts}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-recipes-container">
+                    <FiBookmark size={60} color="#e67e22" />
+                    <Title level={4}>You haven't saved any recipes yet</Title>
+                    <Button type="primary">Discover Recipes</Button>
+                  </div>
+                )}
+              </div>
             </TabPane>
           </Tabs>
         </>

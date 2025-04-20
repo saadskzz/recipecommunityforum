@@ -1,125 +1,165 @@
-  import { useState, useEffect } from 'react';
-  import { message } from 'antd';
-  import { useGetAllPostsQuery, useDeleteSelfPostMutation } from '../../../Slices/postSlice';
-  import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation, useBookmarkPostMutation } from '../../../Slices/authSlice'; // Add useBookmarkPostMutation
-  import './getpost.css';
-  import PostItem from './PostItem';
+import { useState, useEffect } from 'react';
+import { message } from 'antd';
+import { useGetAllPostsQuery, useDeleteSelfPostMutation } from '../../../Slices/postSlice';
+import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation, useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
+import './getpost.css';
+import PostItem from './PostItem';
 import noPost from '../../../../noPost.jpg'
-  interface Post {
+
+interface Post {
+  _id: string;
+  title: string;
+  ingredients: [string];
+  instructions: string;
+  recipeimg: string;
+  user: {
     _id: string;
-    title: string;
-    ingredients: [string];
-    instructions: string;
-    recipeimg: string;
-    user: {
-      _id: string;
-      firstName: string;
-      lastName: string;
-    };
-    discussionCategory: {
-      discussionCategory: string;
-    };
-    createdAt: string;
-    likes: string[];
-    unlikes: string[];
-    likesCount: number;
-    unlikesCount: number;
-  }
+    firstName: string;
+    lastName: string;
+  };
+  discussionCategory: {
+    _id: string;
+    discussionCategory: string;
+  };
+  createdAt: string;
+  likes: string[];
+  unlikes: string[];
+  likesCount: number;
+  unlikesCount: number;
+}
 
-  function GetPosts() {
-    const { data: posts, error, isLoading } = useGetAllPostsQuery(undefined);
-    const { data: currentUser } = useGetCurrentUserQuery(undefined);
-    const currentUserId = currentUser?.data?._id;
+interface GetPostsProps {
+  categoryId?: string | null;
+}
 
-    const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });
-    const [followingIds, setFollowingIds] = useState<string[]>([]);
+function GetPosts({ categoryId }: GetPostsProps) {
+  const { data: posts, error, isLoading } = useGetAllPostsQuery(undefined);
+  const { data: currentUser, refetch: refetchCurrentUser } = useGetCurrentUserQuery(undefined);
+  const currentUserId = currentUser?.data?._id;
 
-    // Add bookmark mutation hook
-    const [bookmarkPost] = useBookmarkPostMutation();
+  const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
 
-    useEffect(() => {
-      if (followingData) {
-        setFollowingIds(followingData.data.map((user: { _id: string }) => user._id));
-      }
-    }, [followingData]);
+  // Add bookmark mutation hooks
+  const [bookmarkPost] = useBookmarkPostMutation();
+  const [unbookmarkPost] = useUnBookmarkPostMutation();
 
-    const [followUser] = useFollowUserMutation();
-    const [unfollowUser] = useUnfollowUserMutation();
-    const [deleteSelfPost] = useDeleteSelfPostMutation();
+  useEffect(() => {
+    if (followingData) {
+      setFollowingIds(followingData.data.map((user: { _id: string }) => user._id));
+    }
+  }, [followingData]);
 
-    const handleFollow = async (userIdToFollow: string) => {
-      const previousFollowingIds = [...followingIds];
-      setFollowingIds((prev) => [...prev, userIdToFollow]);
-    
-      try {
-        await followUser(userIdToFollow).unwrap();
-      } catch (error) {
-        setFollowingIds(previousFollowingIds);
-        console.error('Failed to follow user:', error);
-        message.error('Failed to follow user. Please try again.');
-      }
-    };
-    
-    const handleUnfollow = async (userIdToUnfollow: string) => {
-      const previousFollowingIds = [...followingIds];
-      setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
-    
-      try {
-        await unfollowUser(userIdToUnfollow).unwrap();
-      } catch (error) {
-        setFollowingIds(previousFollowingIds);
-        console.error('Failed to unfollow user:', error);
-        message.error('Failed to unfollow user. Please try again.');
-      }
-    };
-    const handleDeletePost = async (postId: string) => {
-      try {
-        await deleteSelfPost(postId).unwrap();
-        console.log('Deleted post:', postId);
-      } catch (error) {
-        console.error('Failed to delete post:', error);
-      }
-    };
+  const [followUser] = useFollowUserMutation();
+  const [unfollowUser] = useUnfollowUserMutation();
+  const [deleteSelfPost] = useDeleteSelfPostMutation();
 
-   
-    const handleBookmarkPost = async (postId: string) => {
-      try {
+  const handleFollow = async (userIdToFollow: string) => {
+    const previousFollowingIds = [...followingIds];
+    setFollowingIds((prev) => [...prev, userIdToFollow]);
+  
+    try {
+      await followUser(userIdToFollow).unwrap();
+    } catch (error) {
+      setFollowingIds(previousFollowingIds);
+      console.error('Failed to follow user:', error);
+      message.error('Failed to follow user. Please try again.');
+    }
+  };
+  
+  const handleUnfollow = async (userIdToUnfollow: string) => {
+    const previousFollowingIds = [...followingIds];
+    setFollowingIds((prev) => prev.filter((id) => id !== userIdToUnfollow));
+  
+    try {
+      await unfollowUser(userIdToUnfollow).unwrap();
+    } catch (error) {
+      setFollowingIds(previousFollowingIds);
+      console.error('Failed to unfollow user:', error);
+      message.error('Failed to unfollow user. Please try again.');
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await deleteSelfPost(postId).unwrap();
+      message.success('Post deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+      message.error('Failed to delete post');
+    }
+  };
+
+  const handleBookmarkPost = async (postId: string) => {
+    try {
+      const isBookmarked = currentUser?.data?.bookmarkedPosts?.includes(postId);
+      
+      if (isBookmarked) {
+        await unbookmarkPost(postId).unwrap();
+        message.success('Recipe removed from favorites');
+      } else {
         await bookmarkPost(postId).unwrap();
-        console.log('Bookmarked post:', postId);
-      } catch (error) {
-        console.error('Failed to bookmark post:', error);
-        throw error; 
+        message.success('Recipe added to favorites');
       }
-    };
+      
+      // Refresh currentUser to get updated bookmarked posts
+      refetchCurrentUser();
+    } catch (error) {
+      console.error('Failed to update bookmark:', error);
+      message.error('Failed to update favorites');
+    }
+  };
 
-    return (<div>
-        <h1>All posts</h1>
-      <div className="post-style">
-       
-        {isLoading && <p>Loading...</p>}
-        {error && <div className='error-content' > <div className='no-post-style'><img src={noPost} alt="no post" /></div>
-        <p>No posts Currently </p> </div>}
-                    
-        {posts &&
-          posts.postData.map((post: Post) => (
-            <div>
+  // Filter posts based on category if categoryId is provided
+  const filteredPosts = posts && posts.postData ? 
+    (categoryId ? 
+      posts.postData.filter(post => post.discussionCategory._id === categoryId) : 
+      posts.postData) : 
+    [];
 
-            <PostItem
-              key={post._id}
-              post={post}
-              currentUser={currentUser?.data}
-              followingIds={followingIds}
-              handleFollow={handleFollow}
-              handleUnfollow={handleUnfollow}
-              handleDeletePost={handleDeletePost}
-              handleBookmarkPost={handleBookmarkPost}
-            />
-            </div>
-         
-          ))}
-             </div>
-      </div>
-    );
-  }
+  const noPostsAvailable = filteredPosts.length === 0;
 
-  export default GetPosts;
+  return (
+    <div>
+      {isLoading && (
+        <div className="loader-container">
+          <div className="loader"></div>
+        </div>
+      )}
+      
+      {error && (
+        <div className='error-content'> 
+          <div className='no-post-style'>
+            <img src={noPost} alt="no post" />
+          </div>
+          <p>No posts currently available</p> 
+        </div>
+      )}
+                  
+      {posts && noPostsAvailable && (
+        <div className='error-content'>
+          <div className='no-post-style'>
+            <img src={noPost} alt="no post" />
+          </div>
+          <p>{categoryId ? "No posts in this category" : "No posts have been created yet"}</p>
+        </div>
+      )}
+      
+      {filteredPosts.map((post: Post) => (
+        <div key={post._id}>
+          <PostItem
+            post={post}
+            currentUser={currentUser?.data}
+            followingIds={followingIds}
+            handleFollow={handleFollow}
+            handleUnfollow={handleUnfollow}
+            handleDeletePost={handleDeletePost}
+            handleBookmarkPost={handleBookmarkPost}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default GetPosts;

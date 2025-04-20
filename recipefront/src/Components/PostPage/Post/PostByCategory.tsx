@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetPostsByCategoryQuery, useDeleteSelfPostMutation } from '../../../Slices/postSlice';
-import { useBookmarkPostMutation } from '../../../Slices/authSlice';
+import { useBookmarkPostMutation, useUnBookmarkPostMutation } from '../../../Slices/authSlice';
 import { useGetDiscussionByIdQuery } from '../../../Slices/discussionsApi';
 import { useGetCurrentUserQuery, useGetFollowingQuery, useFollowUserMutation, useUnfollowUserMutation } from '../../../Slices/authSlice';
+import { message } from 'antd';
 import PostItem from './PostItem';
 import './getpost.css';
 import noPost from '../../../../noPost.jpg'
@@ -37,7 +38,7 @@ function PostByCategory() {
   const { data: postsData, error: postsError, isLoading: postsLoading } = useGetPostsByCategoryQuery(categoryId);
   const posts = postsData?.data;
 
-  const { data: currentUser } = useGetCurrentUserQuery(undefined);
+  const { data: currentUser, refetch: refetchCurrentUser } = useGetCurrentUserQuery(undefined);
   const currentUserId = currentUser?.data?._id;
 
   const { data: followingData } = useGetFollowingQuery(currentUserId, { skip: !currentUserId });
@@ -47,6 +48,7 @@ function PostByCategory() {
   const [unfollowUser] = useUnfollowUserMutation();
   const [deleteSelfPost] = useDeleteSelfPostMutation();
   const [bookmarkPost] = useBookmarkPostMutation();
+  const [unbookmarkPost] = useUnBookmarkPostMutation();
 
   useEffect(() => {
     if (followingData) {
@@ -83,18 +85,30 @@ function PostByCategory() {
   const handleDeletePost = async (postId: string) => {
     try {
       await deleteSelfPost(postId).unwrap();
-      console.log('Deleted post:', postId);
+      message.success('Post deleted successfully');
     } catch (error) {
       console.error('Failed to delete post:', error);
+      message.error('Failed to delete post');
     }
   };
 
   const handleBookmarkPost = async (postId: string) => {
     try {
-      await bookmarkPost(postId).unwrap();
-      console.log('Bookmarked post:', postId);
+      const isBookmarked = currentUser?.data?.bookmarkedPosts?.includes(postId);
+      
+      if (isBookmarked) {
+        await unbookmarkPost(postId).unwrap();
+        message.success('Recipe removed from favorites');
+      } else {
+        await bookmarkPost(postId).unwrap();
+        message.success('Recipe added to favorites');
+      }
+      
+      // Refresh currentUser to get updated bookmarked posts
+      refetchCurrentUser();
     } catch (error) {
-      console.error('Failed to bookmark post:', error);
+      console.error('Failed to update bookmark:', error);
+      message.error('Failed to update favorites');
     }
   };
 

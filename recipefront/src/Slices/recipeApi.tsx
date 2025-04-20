@@ -1,5 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// Define interface for Recipe object
+interface Recipe {
+    _id: string;
+    name: string;
+    // Add other properties as needed
+}
+
 // Define the recipe API slice
 export const recipeApi = createApi({
     // Unique key for this API slice in the Redux store
@@ -45,7 +52,7 @@ export const recipeApi = createApi({
             providesTags: (result) =>
                 result
                     ? [
-                        ...result.map(({ _id }) => ({ type: 'Recipe', id: _id })),
+                        ...result.map(({ _id }: { _id: string }) => ({ type: 'Recipe', id: _id })),
                         { type: 'Recipe' }
                     ]
                     : [{ type: 'Recipe' }],
@@ -70,7 +77,7 @@ export const recipeApi = createApi({
             providesTags: (result) =>
                 result
                     ? [
-                        ...result.map(({ _id }) => ({ type: 'Recipe', id: _id })),
+                        ...result.map(({ _id }: { _id: string }) => ({ type: 'Recipe', id: _id })),
                         { type: 'Recipe' }
                     ]
                     : [{ type: 'Recipe' }],

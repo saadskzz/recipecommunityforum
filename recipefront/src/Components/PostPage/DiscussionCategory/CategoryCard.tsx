@@ -1,9 +1,13 @@
 import { useGetAllDiscussionsQuery } from "../../../Slices/discussionsApi";
 import { BookFilled } from "@ant-design/icons";
-import { Link } from "react-router-dom"; 
 import './categorycard.css';
 
-const CategoryCard = () => {
+interface CategoryCardProps {
+  onCategorySelect?: (categoryId: string) => void;
+  selectedCategory?: string | null;
+}
+
+const CategoryCard = ({ onCategorySelect, selectedCategory }: CategoryCardProps) => {
   const { data: categories, isLoading, isError } = useGetAllDiscussionsQuery(undefined);
 
   if (isLoading) return <div>Loading categories...</div>;
@@ -14,16 +18,14 @@ const CategoryCard = () => {
       <h2>Discussion Categories</h2>
       <div className="categories-list">
         {categories?.map((category: any) => (
-          <Link
-            to={`category/${category._id}`}
+          <div
             key={category._id}
-            style={{ textDecoration: 'none' }}  
+            className={`category-item ${selectedCategory === category._id ? 'selected-category' : ''}`}
+            onClick={() => onCategorySelect && onCategorySelect(category._id)}
           >
-            <div className="category-item">
-              <BookFilled />
-              <span>{category.discussionCategory}</span>
-            </div>
-          </Link>
+            <BookFilled />
+            <span>{category.discussionCategory}</span>
+          </div>
         ))}
       </div>
     </div>

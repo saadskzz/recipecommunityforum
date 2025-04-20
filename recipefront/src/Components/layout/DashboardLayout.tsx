@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 import './dashboardlayout.css'
 import { useState } from 'react'
 import { Input } from 'antd'
-
+import SearchBar from '../Home/SearchBar'
 const { Search } = Input
 
 const DashboardLayout = () => {
@@ -23,19 +23,6 @@ const DashboardLayout = () => {
         <header className='dashboard-header'>
           <div className='logo-section'>
             <h1>RecipeCommunity</h1>
-          </div>
-          <div className='search-section'>
-            <Search 
-              placeholder="Search for recipes..." 
-              allowClear 
-              enterButton="Search" 
-              size="large" 
-              onSearch={handleSearch} 
-              style={{ width: 400 }}
-            />
-          </div>
-          <div className='header-actions'>
-            <button className='create-recipe-btn'>+ New Recipe</button>
           </div>
         </header>
         <main className='main-content'>

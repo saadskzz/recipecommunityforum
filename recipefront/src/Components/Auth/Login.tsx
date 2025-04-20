@@ -6,8 +6,10 @@ import { Link, useNavigate } from "react-router-dom"
 import { useLoginUserMutation } from '../../Slices/authSlice'
 import { useDispatch } from 'react-redux';
 import { loginSuccess, verifyToken } from '../../Slices/authverify';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MdOutlineFoodBank } from 'react-icons/md';
+import ThemeToggle from '../ThemeToggle';
+import { ThemeProvider } from '../../contexts/ThemeContext';
 
 interface LoginForm {
     email: string,
@@ -20,6 +22,12 @@ function Login() {
     const dispatch = useDispatch();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    // Set data-theme attribute on the document element
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }, []);
 
     const { control, handleSubmit, formState: { isValid } } = useForm({
         defaultValues: {
@@ -60,66 +68,71 @@ function Login() {
     }
     
     return (
-        <div className="auth-input">
-            <div className="inp-form-style">
-                <div className="logo-container">
-                    <MdOutlineFoodBank size={40} color="#e67e22" />
-                    <h2 className="logo-text">RecipeCommunity</h2>
-                </div>
-                <h1 className="auth-title">Welcome Back</h1>
-                <p className="auth-subtitle">Sign in to continue to your account</p>
-                
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Controller
-                        name="email"
-                        control={control}
-                        rules={{
-                            required: "Email is required",
-                            pattern: {
-                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                message: "Invalid email address"
-                            }
-                        }}
-                        render={({ field, fieldState: { error } }) => (
-                            <CustomInput
-                                {...field}
-                                type="email"
-                                placeholder="Enter your email"
-                                error={error?.message}
-                                name={field.name}
-                            />
-                        )}
-                    />
-                    <Controller
-                        name="password"
-                        control={control}
-                        rules={{ required: "Password is required" }}
-                        render={({ field, fieldState: { error } }) => (
-                            <CustomInput
-                                {...field}
-                                type="password"
-                                placeholder="Enter your password"
-                                error={error?.message}
-                                name={field.name}
-                            />
-                        )}
-                    />
-
-                    <CustomButton 
-                        btnTxt='Login'
-                        disabled={!isValid}
-                    />
+        <ThemeProvider>
+            <div className="auth-input">
+                <div className="inp-form-style">
+                    <div className="auth-header">
+                        <div className="logo-container">
+                            <MdOutlineFoodBank size={40} color="var(--primary-color)" />
+                            <h2 className="logo-text">RecipeCommunity</h2>
+                        </div>
+                        <ThemeToggle />
+                    </div>
+                    <h1 className="auth-title">Welcome Back</h1>
+                    <p className="auth-subtitle">Sign in to continue to your account</p>
                     
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    {successMessage && <p className="success-message">{successMessage}</p>}
-                </form>
-                
-                <div className='signup-link'>
-                    <p>Don't have an account?</p>
-                    <Link to={'/signup'}>Register now</Link>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <Controller
+                            name="email"
+                            control={control}
+                            rules={{
+                                required: "Email is required",
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    message: "Invalid email address"
+                                }
+                            }}
+                            render={({ field, fieldState: { error } }) => (
+                                <CustomInput
+                                    {...field}
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    error={error?.message}
+                                    name={field.name}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name="password"
+                            control={control}
+                            rules={{ required: "Password is required" }}
+                            render={({ field, fieldState: { error } }) => (
+                                <CustomInput
+                                    {...field}
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    error={error?.message}
+                                    name={field.name}
+                                />
+                            )}
+                        />
+
+                        <CustomButton 
+                            btnTxt='Login'
+                            disabled={!isValid}
+                        />
+                        
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        {successMessage && <p className="success-message">{successMessage}</p>}
+                    </form>
+                    
+                    <div className='signup-link'>
+                        <p>Don't have an account?</p>
+                        <Link to={'/signup'}>Register now</Link>
+                    </div>
                 </div>
             </div>
-        </div>
+        </ThemeProvider>
     )
 }
 

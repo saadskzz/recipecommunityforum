@@ -1,0 +1,41 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-icon {
+  font-size: 18px;
+}
+
+.light-icon {
+  color: var(--text-dark);
+}
+
+.dark-icon {
+  color: var(--text-dark);
+}
+
+.theme-switch {
+  background-color: var(--primary-color) !important;
+}
+
+.theme-switch.dark-switch {
+  background-color: #722ed1 !important;
+}
+
+[data-theme='dark'] .light-icon {
+  color: #ffd666;
+}
+
+[data-theme='dark'] .dark-icon {
+  color: #722ed1;
+}
+
+[data-theme='light'] .light-icon {
+  color: #faad14;
+}
+
+[data-theme='light'] .dark-icon {
+  color: #555;
+} 

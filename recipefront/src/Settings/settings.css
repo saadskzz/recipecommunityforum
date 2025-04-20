@@ -10,5 +10,179 @@
     font-size: 20px;
 }
 .style-features:hover{
-    background-color: #773CBD;
+    background-color: #27ae60;
+}
+
+.settings-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.settings-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-small);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.settings-title {
+    color: var(--text-dark);
+    margin-bottom: 8px !important;
+}
+
+.settings-subtitle {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.settings-section {
+    margin: 20px 0;
+}
+
+.settings-section h4 {
+    color: var(--text-dark);
+    margin-bottom: 16px !important;
+}
+
+.settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: var(--background-light);
+    margin-bottom: 12px;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.settings-option.clickable {
+    cursor: pointer;
+}
+
+.settings-option.clickable:hover {
+    background-color: var(--background-medium);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-small);
+}
+
+.option-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-switch {
+    background-color: var(--primary-color);
+}
+
+.password-modal .ant-modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--card-bg);
+}
+
+.password-modal .ant-modal-header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+}
+
+.password-modal .ant-modal-title {
+    color: var(--text-dark);
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-icon {
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+.password-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.password-input {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    border-radius: 8px;
+}
+
+.password-input:hover {
+    border-color: var(--primary-color) !important;
+}
+
+.password-input:focus,
+.password-input-focused {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2) !important;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.modal-footer .ant-btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.modal-footer .ant-btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Dark theme adjustments */
+.dark-theme-settings .settings-card {
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-medium);
+}
+
+.dark-theme-settings .settings-option {
+    background-color: var(--background-light);
+}
+
+.dark-theme-settings .settings-option:hover {
+    background-color: var(--background-medium);
+}
+
+.dark-theme-modal .ant-modal-content,
+.dark-theme-modal .ant-modal-header {
+    background-color: var(--card-bg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .settings-container {
+        padding: 10px;
+    }
+    
+    .settings-option {
+        padding: 12px;
+    }
+    
+    .settings-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .settings-section h4 {
+        font-size: 1.2rem !important;
+    }
 }

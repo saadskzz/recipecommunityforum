@@ -6,11 +6,11 @@ import store from './store/store'
 import {  Route, Routes, Navigate } from 'react-router-dom'
 import ForumPage from './Components/PostPage/Forum/ForumPage'
 import ProtectedRoute from './Components/ProtectedRoute'
-
+import { ThemeProvider } from './contexts/ThemeContext'
 import ProfileWhole from './Components/Profile/ProfileWhole'
 
 import DashboardLayout from './Components/layout/DashboardLayout'
-import GetPosts from './Components/PostPage/Post/getPosts'
+import GetPosts from './Components/PostPage/Post/GetPosts'
 import FollowedPost from './Components/PostPage/Post/FollowedPost'
 import BookmarkedPosts from './Components/PostPage/Post/BookmarkedPosts'
 import PostByCategory from './Components/PostPage/Post/PostByCategory'
@@ -23,7 +23,7 @@ import UserRecipes from './Components/Home/UserRecipes'
 function App() {
   return (
     <Provider store={store}>
-      
+      <ThemeProvider>
         <Routes>
           <Route path='/signup' element={ <SignUp/>}/>
           <Route path='/login' element={<Login/>}/>
@@ -41,13 +41,8 @@ function App() {
           </Route>
          
           <Route path='/' element={<Navigate to="/login" />} />
-          
-         
-   
-
-
-       </Routes>
-    
+        </Routes>
+      </ThemeProvider>
     </Provider>
   )
 }

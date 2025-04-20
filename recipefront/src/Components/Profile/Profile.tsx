@@ -10,6 +10,7 @@ import noPost from '../../../noPost.jpg';
 import { Button, Tabs, Card, Row, Col, Typography, Divider, Avatar, Tooltip, message } from 'antd';
 import { FiEdit2, FiUser, FiClock, FiHeart, FiBookmark, FiCamera } from 'react-icons/fi';
 import { MdOutlineFoodBank } from 'react-icons/md';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -73,6 +74,7 @@ interface Following {
 }
 
 const Profile = () => {
+  const { theme } = useTheme();
   const [uploadProfilePic] = useUploadProfilePicMutation();
   const [uploadCoverPic] = useUploadCoverPicMutation();
   const [updateBio] = useUpdateBioMutation();
@@ -206,10 +208,9 @@ const Profile = () => {
   // Treat posts as recipes for this redesign
   const userRecipes = posts?.data || [];
   const savedRecipes = likedPosts?.data || [];
-  console.log(userRecipes);
 
   return (
-    <div className="profile-container">
+    <div className={`profile-container ${theme === 'dark' ? 'dark-theme-profile' : ''}`}>
       {user && (
         <>
           <div className="profile-header-container">
@@ -253,8 +254,8 @@ const Profile = () => {
               </div>
               
               <div className="profile-details">
-                <Title level={2}>{`${user.data.firstName} ${user.data.lastName}`}</Title>
-                <Text type="secondary">{`@${user.data.firstName}${user.data.lastName}`}</Text>
+                <Title level={2} className="profile-name">{`${user.data.firstName} ${user.data.lastName}`}</Title>
+                <Text type="secondary" className="profile-username">{`@${user.data.firstName}${user.data.lastName}`}</Text>
                 
                 {isEditingBio ? (
                   <div className="bio-edit-container">
@@ -318,7 +319,7 @@ const Profile = () => {
             accept="image/*"
           />
           
-          <Divider />
+          <Divider className="profile-divider" />
           
           <Tabs 
             activeKey={activeTab} 
@@ -345,7 +346,7 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="empty-recipes-container">
-                    <MdOutlineFoodBank size={60} color="#e67e22" />
+                    <MdOutlineFoodBank size={60} color="var(--primary-color)" />
                     <Title level={4}>You haven't created any recipes yet</Title>
                     <Button type="primary" icon={<FiEdit2 />}>Create Your First Recipe</Button>
                   </div>
@@ -373,7 +374,7 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="empty-recipes-container">
-                    <FiBookmark size={60} color="#e67e22" />
+                    <FiBookmark size={60} color="var(--primary-color)" />
                     <Title level={4}>You haven't saved any recipes yet</Title>
                     <Button type="primary">Discover Recipes</Button>
                   </div>

@@ -5,11 +5,12 @@
 }
 
 .profile-header-container {
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px var(--shadow-color);
   overflow: hidden;
   margin-bottom: 2rem;
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .cover-image-container {
@@ -41,7 +42,7 @@
 }
 
 .edit-cover-btn:hover {
-  background-color: #fff;
+  background-color: var(--background-light);
 }
 
 .profile-info-container {
@@ -73,7 +74,7 @@
 }
 
 .edit-avatar-btn:hover {
-  background-color: #fff;
+  background-color: var(--background-light);
 }
 
 .profile-details {
@@ -84,13 +85,13 @@
 .bio-text {
   margin: 1rem 0;
   line-height: 1.6;
-  color: #555;
+  color: var(--text-color);
 }
 
 .edit-bio-btn {
   margin-left: 8px;
   padding: 0;
-  color: #e67e22;
+  color: var(--primary-color);
 }
 
 .bio-edit-container {
@@ -102,9 +103,12 @@
 .bio-input {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 1rem;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s, background-color 0.3s, color 0.3s;
 }
 
 .profile-stats {
@@ -117,6 +121,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: var(--text-color);
 }
 
 .profile-tabs {
@@ -127,11 +132,11 @@
 }
 
 .profile-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #e67e22;
+  color: var(--primary-color);
 }
 
 .profile-tabs .ant-tabs-ink-bar {
-  background-color: #e67e22;
+  background-color: var(--primary-color);
 }
 
 .tab-content-container {
@@ -167,25 +172,26 @@
   justify-content: center;
   padding: 40px 20px;
   text-align: center;
-  background: #f9f9f9;
+  background: var(--background-light);
   border-radius: 8px;
   width: 100%;
   margin: 20px auto;
+  transition: background-color 0.3s;
 }
 
 .empty-recipes-container h4 {
   margin: 1rem 0 !important;
-  color: #555;
+  color: var(--text-color);
 }
 
 .empty-recipes-container button {
-  background-color: #e67e22;
-  border-color: #e67e22;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .empty-recipes-container button:hover {
-  background-color: #d35400;
-  border-color: #d35400;
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
 }
 
 .profile-loading {
@@ -200,7 +206,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid rgba(230, 126, 34, 0.1);
-  border-left-color: #e67e22;
+  border-left-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -233,8 +239,9 @@
 .recipe-list .post-container {
   width: 100%;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-color);
   border-radius: 8px;
+  transition: box-shadow 0.3s;
 }
 
 /* Makes sure images in posts have consistent sizing */
@@ -245,14 +252,31 @@
   max-height: 300px;
 }
 
+/* Dark mode specific styles */
+[data-theme='dark'] .profile-header-container {
+  background-color: var(--card-bg-dark);
+  box-shadow: 0 2px 8px var(--shadow-color-dark);
+}
+
+[data-theme='dark'] .bio-text {
+  color: var(--text-color-dark);
+}
+
+[data-theme='dark'] .stat-item {
+  color: var(--text-color-dark);
+}
+
+[data-theme='dark'] .empty-recipes-container {
+  background: var(--background-dark);
+}
+
+[data-theme='dark'] .empty-recipes-container h4 {
+  color: var(--text-color-dark);
+}
+
 /* Ensure mobile responsiveness */
 @media (max-width: 768px) {
   .tab-content-container {
     padding: 10px;
-  }
-  
-  .profile-tabs {
-    margin-left: 10px;
-    margin-right: 10px;
   }
 }

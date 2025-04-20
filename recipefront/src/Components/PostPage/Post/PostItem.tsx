@@ -8,6 +8,7 @@ import { BookOutlined, CommentOutlined, DeleteOutlined, SmallDashOutlined, Clock
 import PostForm from './PostForm';
 import initialProfile from '../../../../initialprofile.jpg';
 import { message, Modal, Input, Avatar, Tooltip, Divider, Tag, Button, Spin } from 'antd';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 interface PostItemProps {
   post: Post;
@@ -78,6 +79,8 @@ interface CommentResponse {
 // Create a simplified comment form component
 const CommentForm = ({ value, onChange, placeholder, onSubmit, isReply = false }: 
   { value: string; onChange: (e: any) => void; placeholder: string; onSubmit: () => void; isReply?: boolean }) => {
+  const { theme } = useTheme();
+  
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && isReply) {
       e.preventDefault();
@@ -100,7 +103,7 @@ const CommentForm = ({ value, onChange, placeholder, onSubmit, isReply = false }
               type="text" 
               icon={<SendOutlined />} 
               onClick={onSubmit}
-              style={{ color: value.trim() ? '#e67e22' : '#ccc' }}
+              style={{ color: value.trim() ? 'var(--primary-color)' : 'var(--text-light)' }}
               disabled={!value.trim()}
             />
           }
@@ -137,6 +140,7 @@ const CommentItem = ({
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [showReplies, setShowReplies] = useState(false);
+  const { theme } = useTheme();
 
   const handleReplySubmit = async () => {
     if (replyContent.trim()) {
@@ -257,6 +261,7 @@ const PostItem: React.FC<PostItemProps> = ({
   handleDeletePost,
   handleBookmarkPost,
 }) => {
+  const { theme } = useTheme();
   const [upvote] = useLikePostMutation();
   const [downvote] = useUnlikePostMutation();
   const [bookmarkPostMutation] = useBookmarkPostMutation();
@@ -524,7 +529,7 @@ const PostItem: React.FC<PostItemProps> = ({
   }, [commentsResponse]);
 
   return (
-    <div className="post-style-map">
+    <div className={`post-style-map ${theme === 'dark' ? 'dark-theme-post' : ''}`}>
       <div className="pfp-detail">
         <div className="created-by">
           <Link to={`/dashboard/profile/${post.user._id}`}>
@@ -549,7 +554,7 @@ const PostItem: React.FC<PostItemProps> = ({
         <div className="post-attribute">
           {post.user._id !== currentUser?._id ? (
             followingIds?.includes(post.user._id) ? (
-              <button className="follow" onClick={() => handleUnfollow(post.user._id)}>
+              <button className="follow unfollow-btn" onClick={() => handleUnfollow(post.user._id)}>
                 Following
               </button>
             ) : (
@@ -568,7 +573,7 @@ const PostItem: React.FC<PostItemProps> = ({
             </Tooltip>
           )}
           {showDelete && post.user._id === currentUser?._id && (
-            <div style={{ position: 'absolute', right: 0, background: 'white', padding: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '4px', zIndex: 10 }}>
+            <div className="delete-options">
               <div className="delete-post" onClick={handleDelete}>
                 <DeleteOutlined /> Delete
               </div>
@@ -655,7 +660,8 @@ const PostItem: React.FC<PostItemProps> = ({
             <Button
               type="primary"
               onClick={handleCreateComment}
-              style={{ marginTop: 10, backgroundColor: '#e67e22', borderColor: '#e67e22', width: '100%', maxWidth: '150px' }}
+              style={{ marginTop: 10, width: '100%', maxWidth: '150px' }}
+              className="comment-button"
             >
               Post Comment
             </Button>

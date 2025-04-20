@@ -4,10 +4,14 @@ import './dashboardlayout.css'
 import { useState } from 'react'
 import { Input } from 'antd'
 import SearchBar from '../Home/SearchBar'
+import ThemeToggle from '../ThemeToggle'
+import { useTheme } from '../../contexts/ThemeContext'
+
 const { Search } = Input
 
 const DashboardLayout = () => {
   const [searchValue, setSearchValue] = useState('')
+  const { theme } = useTheme()
 
   const handleSearch = (value: string) => {
     console.log('Search:', value)
@@ -15,7 +19,7 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div className='pageContainer'>
+    <div className={`pageContainer ${theme === 'dark' ? 'dark-theme' : ''}`}>
       <div className='sidebar-container'>
         <Sidebar/>
       </div>
@@ -23,6 +27,9 @@ const DashboardLayout = () => {
         <header className='dashboard-header'>
           <div className='logo-section'>
             <h1>RecipeCommunity</h1>
+          </div>
+          <div className='header-actions'>
+            <ThemeToggle />
           </div>
         </header>
         <main className='main-content'>

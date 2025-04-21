@@ -63,6 +63,15 @@ const getRecipeById = async (req, res) => {
         res.status(500).json({ message: 'Error fetching recipe', error: error.message });
     }
 };
+const deleteRecipe = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Recipe.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Recipe deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting recipe', error: error.message });
+    }
+}
 
 // New controller method to get recipes of the logged in user
 const getUserRecipes = async (req, res) => {
@@ -74,4 +83,4 @@ const getUserRecipes = async (req, res) => {
     }
 };
 
-export { createRecipe, getRecipes, getRecipeById, getUserRecipes };
+export { createRecipe, getRecipes, getRecipeById, getUserRecipes,deleteRecipe };
